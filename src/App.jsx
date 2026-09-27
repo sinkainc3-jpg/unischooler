@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { unitsData } from './data/units';
 import UnitFrame from './components/UnitFrame';
 import TrUnitFrame from './components/TrUnitFrame';
@@ -12,17 +12,6 @@ const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получи
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('unit');
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'E') {
-        e.preventDefault();
-        setCurrentScreen('adminEditor');
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
   const currentUnit = unitsData?.[currentUnitIndex] || unitsData?.[0] || {};
   const isTrain = currentUnit.type === 'train';
@@ -206,6 +195,14 @@ export default function App() {
           </span>
         </div>
       )}
+
+      {/* Кнопка входа в конструктор */}
+      <button
+        onClick={() => setCurrentScreen('adminEditor')}
+        className="fixed top-4 right-4 z-50 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+      >
+        <span>✏️</span> Конструктор
+      </button>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl">
 
