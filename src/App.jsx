@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { unitsData } from './data/units';
 import UnitFrame from './components/UnitFrame';
 import TrUnitFrame from './components/TrUnitFrame';
 import Alien from './components/Alien';
 import Calendar from './components/Calendar';
+import UnitEditor from './pages/admin/UnitEditor';
 
 const PRAISE_PHRASES = ['Так держать!', 'Хорошая работа!', 'Правильно!'];
 const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получится!', 'Не расстраивайся!', 'Ты сможешь!'];
@@ -11,6 +12,17 @@ const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получи
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('unit');
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'E') {
+        e.preventDefault();
+        setCurrentScreen('adminEditor');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const currentUnit = unitsData?.[currentUnitIndex] || unitsData?.[0] || {};
   const isTrain = currentUnit.type === 'train';
@@ -147,6 +159,12 @@ export default function App() {
           ← Вернуться к уроку
         </button>
       </div>
+    );
+  }
+
+  if (currentScreen === 'adminEditor') {
+    return (
+      <UnitEditor onBack={() => setCurrentScreen('unit')} />
     );
   }
 
