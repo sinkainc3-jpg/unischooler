@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@layer base {
+  html, body {
+    background-color: #020617;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
 @keyframes praise-pop {
   0% {
     opacity: 0;

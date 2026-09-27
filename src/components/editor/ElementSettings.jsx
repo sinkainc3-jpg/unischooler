@@ -13,22 +13,52 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
     onUpdate(element.id, { [key]: numValue });
   };
 
+  const renderImageSettings = () => (
+    <div className="space-y-3">
+      <label className="block space-y-1">
+        <span className="text-xs text-slate-400">Загрузить изображение</span>
+        <input
+          type="file"
+          accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const url = URL.createObjectURL(file);
+            onUpdate(element.id, { src: url });
+          }}
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-amber-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-amber-500"
+        />
+      </label>
+      <label className="block space-y-1">
+        <span className="text-xs text-slate-400">Путь к картинке (src)</span>
+        <input
+          type="text"
+          value={element.src || ''}
+          onChange={(e) => onUpdate(element.id, { src: e.target.value })}
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs"
+          placeholder="/content/math/fig1.png"
+        />
+        <p className="text-xs text-slate-500 mt-1">Относительный путь для JSON (файл не загружается).</p>
+      </label>
+    </div>
+  );
+
   const renderTextSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Text</span>
+        <span className="text-xs text-slate-400">Текст</span>
         <textarea
           value={element.content}
           onChange={(e) => handleChange('content', e.target.value)}
           rows={3}
           className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono text-sm"
-          placeholder="Текст элемента"
+          placeholder="Введите текст..."
         />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Font size</span>
+          <span className="text-xs text-slate-400">Размер шрифта</span>
           <input
             type="number"
             min="8"
@@ -41,28 +71,28 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Font weight</span>
+          <span className="text-xs text-slate-400">Начертание шрифта</span>
           <select
             value={element.fontWeight}
             onChange={(e) => handleChange('fontWeight', e.target.value)}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           >
-            <option value="normal">Normal</option>
-            <option value="bold">Bold</option>
+            <option value="normal">Обычный</option>
+            <option value="bold">Жирный</option>
           </select>
         </label>
       </div>
 
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Text align</span>
+        <span className="text-xs text-slate-400">Выравнивание</span>
         <select
           value={element.textAlign}
           onChange={(e) => handleChange('textAlign', e.target.value)}
           className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
         >
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-          <option value="right">Right</option>
+          <option value="left">По левому краю</option>
+          <option value="center">По центру</option>
+          <option value="right">По правому краю</option>
         </select>
       </label>
 
@@ -90,7 +120,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   const renderInputSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Correct answer</span>
+        <span className="text-xs text-slate-400">Правильный ответ</span>
         <input
           type="text"
           value={element.correctAnswer}
@@ -104,10 +134,10 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
 
   const renderChoiceSettings = () => {
     const addOption = () => {
-      if (!newOptionText.trim()) return;
+      const text = newOptionText.trim() || `Вариант ${options.length + 1}`;
       const newOption = {
         id: `option-${Date.now()}`,
-        text: newOptionText.trim(),
+        text,
       };
       const newOptions = [...options, newOption];
       setOptions(newOptions);
@@ -140,57 +170,57 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
       <div className="space-y-3 border-t border-slate-800 pt-3">
         <span className="text-xs text-slate-400 font-medium block mb-2">Размер</span>
         <div className="grid grid-cols-2 gap-3">
-          <label className="block space-y-1">
-            <span className="text-xs text-slate-400">Размер текста (px)</span>
-            <input
-              type="number"
-              min="8"
-              max="100"
-              step="1"
-              value={element.fontSize || 18}
-              onChange={(e) => handleChange('fontSize', e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </label>
+<label className="block space-y-1">
+          <span className="text-xs text-slate-400">Размер текста (px)</span>
+          <input
+            type="number"
+            min="8"
+            max="100"
+            step="1"
+            value={element.fontSize || 18}
+            onChange={(e) => handleChange('fontSize', e.target.value)}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </label>
 
-          <label className="block space-y-1">
-            <span className="text-xs text-slate-400">Размер кружка (px)</span>
-            <input
-              type="number"
-              min="8"
-              max="60"
-              step="1"
-              value={element.optionSize || 18}
-              onChange={(e) => handleChange('optionSize', e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </label>
+        <label className="block space-y-1">
+          <span className="text-xs text-slate-400">Размер индикатора (px)</span>
+          <input
+            type="number"
+            min="8"
+            max="60"
+            step="1"
+            value={element.optionSize || 18}
+            onChange={(e) => handleChange('optionSize', e.target.value)}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </label>
 
-          <label className="block space-y-1">
-            <span className="text-xs text-slate-400">Расстояние до текста (px)</span>
-            <input
-              type="number"
-              min="0"
-              max="50"
-              step="1"
-              value={element.optionGap || 8}
-              onChange={(e) => handleChange('optionGap', e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </label>
+        <label className="block space-y-1">
+          <span className="text-xs text-slate-400">Отступ до текста (px)</span>
+          <input
+            type="number"
+            min="0"
+            max="50"
+            step="1"
+            value={element.optionGap || 8}
+            onChange={(e) => handleChange('optionGap', e.target.value)}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </label>
 
-          <label className="block space-y-1">
-            <span className="text-xs text-slate-400">Расстояние между вариантами (px)</span>
-            <input
-              type="number"
-              min="0"
-              max="50"
-              step="1"
-              value={element.optionSpacing || 8}
-              onChange={(e) => handleChange('optionSpacing', e.target.value)}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            />
-          </label>
+        <label className="block space-y-1">
+          <span className="text-xs text-slate-400">Расстояние между вариантами (px)</span>
+          <input
+            type="number"
+            min="0"
+            max="50"
+            step="1"
+            value={element.optionSpacing || 8}
+            onChange={(e) => handleChange('optionSpacing', e.target.value)}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          />
+        </label>
         </div>
       </div>
     );
@@ -198,7 +228,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
     return (
       <div className="space-y-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Correct option</span>
+          <span className="text-xs text-slate-400">Правильный вариант</span>
           <select
             value={element.correctOptionId}
             onChange={(e) => handleCorrectOptionChange(e.target.value)}
@@ -236,8 +266,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             <span className="text-xs text-slate-400 font-medium">Варианты ответа</span>
             <button
               onClick={addOption}
-              disabled={!newOptionText.trim()}
-              className="px-2 py-1 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white"
             >
               + Добавить вариант
             </button>
@@ -260,13 +289,13 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
                   value={opt.text}
                   onChange={(e) => updateOptionText(opt.id, e.target.value)}
                   className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                  placeholder="Option text"
+                  placeholder="Вариант ответа"
                 />
                 <button
                   onClick={() => removeOption(opt.id)}
                   disabled={options.length <= 2}
                   className="p-1 text-slate-400 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed"
-                  title="Remove option"
+                  title="Удалить"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
@@ -290,14 +319,15 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         <span className={`px-2 py-0.5 text-xs rounded ${
           element.type === 'text' ? 'bg-green-500/30 text-green-400' :
           element.type === 'choice' ? 'bg-purple-500/30 text-purple-400' :
+          element.type === 'image' ? 'bg-amber-500/30 text-amber-400' :
           'bg-indigo-500/30 text-indigo-400'
         }`}>
-          {element.type === 'text' ? 'Текст' : element.type === 'choice' ? 'Выбор' : 'Поле ввода'}
+          {element.type === 'text' ? 'Текст' : element.type === 'choice' ? 'Выбор' : element.type === 'image' ? 'Картинка' : 'Поле ввода'}
         </span>
       </div>
 
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Element ID</span>
+        <span className="text-xs text-slate-400">ID элемента</span>
         <input
           type="text"
           value={element.id}
@@ -334,7 +364,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Width (%)</span>
+          <span className="text-xs text-slate-400">Ширина (%)</span>
           <input
             type="number"
             step="0.1"
@@ -347,7 +377,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Height (%)</span>
+          <span className="text-xs text-slate-400">Высота (%)</span>
           <input
             type="number"
             step="0.1"
@@ -360,15 +390,16 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         </label>
       </div>
 
-      {element.type === 'text' ? renderTextSettings() :
-       element.type === 'choice' ? renderChoiceSettings() :
-       renderInputSettings()}
+{element.type === 'text' ? renderTextSettings() :
+        element.type === 'choice' ? renderChoiceSettings() :
+        element.type === 'image' ? renderImageSettings() :
+        renderInputSettings()}
 
       <button
         onClick={onDelete}
         className="w-full px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-medium transition"
       >
-        Delete element
+        Удалить элемент
       </button>
     </div>
   );

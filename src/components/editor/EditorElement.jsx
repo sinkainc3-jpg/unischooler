@@ -32,6 +32,7 @@ export default function EditorElement({
   const isText = element.type === 'text';
   const isChoice = element.type === 'choice';
   const isInput = element.type === 'input';
+  const isImage = element.type === 'image';
 
   useEffect(() => {
     setLocalPosition({ x: element.x, y: element.y, width: element.width, height: element.height });
@@ -281,6 +282,46 @@ export default function EditorElement({
       );
     }
 
+    if (isImage) {
+      const src = element.src || '';
+      return (
+        <div
+          ref={elementRef}
+          style={style}
+        >
+          <img
+            src={src}
+            alt="Элемент-изображение"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              background: '#1e293b',
+            }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+          {!src && (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#64748b',
+              fontSize: '12px',
+              background: '#0f172a',
+              border: '1px dashed #334155',
+              borderRadius: '4px',
+            }}>
+              Нет изображения
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // Preview: input IS interactive
     return (
       <div
@@ -347,9 +388,9 @@ export default function EditorElement({
         style={{
           position: 'absolute',
           inset: 0,
-          border: isSelected ? '2px solid #6366f1' : (isText ? '2px solid #22c55e' : isChoice ? '2px solid #a855f7' : '2px solid #6366f1'),
+          border: isSelected ? '2px solid #6366f1' : (isText ? '2px solid #22c55e' : isChoice ? '2px solid #a855f7' : isImage ? '2px solid #f59e0b' : '2px solid #6366f1'),
           borderRadius: '4px',
-          background: isSelected ? 'rgba(99, 102, 241, 0.15)' : (isText ? 'rgba(34, 197, 94, 0.1)' : isChoice ? 'rgba(168, 85, 247, 0.1)' : 'rgba(99, 102, 241, 0.1)'),
+          background: isSelected ? 'rgba(99, 102, 241, 0.15)' : (isText ? 'rgba(34, 197, 94, 0.1)' : isChoice ? 'rgba(168, 85, 247, 0.1)' : isImage ? 'rgba(245, 158, 11, 0.1)' : 'rgba(99, 102, 241, 0.1)'),
           boxShadow: isSelected ? '0 0 0 2px rgba(99, 102, 241, 0.3)' : 'none',
           pointerEvents: 'none',
         }}
@@ -461,7 +502,47 @@ export default function EditorElement({
               color: 'rgba(255,255,255,0.6)',
               textAlign: 'center',
             }}>
-              +{(element.options || []).length - 3} more
+              +{(element.options || []).length - 3} ещё
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Image - NON-INTERACTIVE in editor mode */}
+      {isImage && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: '#0f172a',
+            border: '1px dashed #334155',
+            borderRadius: '4px',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            overflow: 'hidden',
+          }}
+        >
+          {element.src && (
+            <img
+              src={element.src}
+              alt="Image element"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+            />
+          )}
+          {!element.src && (
+            <div style={{
+              color: '#64748b',
+              fontSize: '12px',
+              textAlign: 'center',
+            }}>
+              Выберите изображение
             </div>
           )}
         </div>

@@ -5,7 +5,6 @@ export default function EditorSidebar({
   unit,
   selectedElement,
   imageUrl,
-  isPreviewMode,
   onUnitChange,
   onImageUpload,
   onAddElement,
@@ -16,7 +15,6 @@ export default function EditorSidebar({
   onExport,
   onCopyJson,
   onImport,
-  onTogglePreview,
   onBack,
   fileInputRef,
   generateId,
@@ -39,10 +37,10 @@ export default function EditorSidebar({
   };
 
   return (
-    <div className="flex flex-col gap-6 h-full">
+    <div className="flex flex-col gap-6 h-full overflow-y-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Конструктор юнитов</h1>
-        <span className="px-2 py-1 text-xs bg-indigo-600 rounded">Admin</span>
+        <span className="px-2 py-1 text-xs bg-indigo-600 rounded">Админ</span>
       </div>
 
       {onBack && (
@@ -131,7 +129,7 @@ export default function EditorSidebar({
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Image path (для JSON)</span>
+          <span className="text-xs text-slate-400 block mb-1">Путь к PNG (для JSON)</span>
           <input
             type="text"
             value={unit.imagePath}
@@ -146,7 +144,7 @@ export default function EditorSidebar({
           <div className="relative aspect-video bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
             <img
               src={imageUrl}
-              alt="Preview"
+              alt="Предпросмотр"
               className="w-full h-full object-contain"
             />
           </div>
@@ -175,6 +173,12 @@ export default function EditorSidebar({
             className="flex-1 px-3 py-1.5 text-sm bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition"
           >
             + Добавить выбор
+          </button>
+          <button
+            onClick={() => onAddElement('image')}
+            className="flex-1 px-3 py-1.5 text-sm bg-amber-600 hover:bg-amber-500 rounded-lg font-medium transition"
+          >
+            + Картинка
           </button>
         </div>
 
@@ -245,7 +249,7 @@ export default function EditorSidebar({
           onClick={onExport}
           className="w-full px-4 py-3 bg-green-600 hover:bg-green-500 rounded-lg font-semibold text-lg transition"
         >
-          Export JSON
+          Экспорт JSON
         </button>
 
         <button
@@ -253,7 +257,7 @@ export default function EditorSidebar({
           disabled={!unit.elements.length}
           className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Copy JSON
+          Копировать JSON
         </button>
 
         <label className="w-full">
@@ -269,20 +273,9 @@ export default function EditorSidebar({
             onClick={() => document.getElementById('import-json').click()}
             className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition"
           >
-            Import JSON
+            Импорт JSON
           </button>
         </label>
-
-        <button
-          onClick={() => onTogglePreview(!isPreviewMode)}
-          className={`w-full px-4 py-2 rounded-lg font-medium transition ${
-            isPreviewMode
-              ? 'bg-amber-600 hover:bg-amber-500'
-              : 'bg-slate-700 hover:bg-slate-600'
-          }`}
-        >
-          {isPreviewMode ? '← Back to editor' : 'Preview →'}
-        </button>
       </div>
     </div>
   );

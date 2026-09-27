@@ -87,6 +87,16 @@ export default function UnitEditor({ onBack }) {
         optionSpacing: 8,
         optionTextColor: '#ffffff',
       };
+    } else if (type === 'image') {
+      newElement = {
+        id: `image-${existingCount + 1}`,
+        type: 'image',
+        x: 20,
+        y: 20,
+        width: 25,
+        height: 20,
+        src: '',
+      };
     }
     
     setUnit((prev) => ({
@@ -189,6 +199,9 @@ export default function UnitEditor({ onBack }) {
             optionTextColor: el.optionTextColor,
           };
         }
+        if (el.type === 'image') {
+          return { ...base, src: el.src };
+        }
         return base;
       }),
     };
@@ -268,13 +281,12 @@ export default function UnitEditor({ onBack }) {
   const selectedElement = unit.elements.find((el) => el.id === selectedElementId);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex">
-      <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 overflow-y-auto flex-shrink-0">
+    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-hidden">
+      <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 flex-shrink-0 h-full">
         <EditorSidebar
           unit={unit}
           selectedElement={selectedElement}
           imageUrl={imageUrl}
-          isPreviewMode={isPreviewMode}
           onUnitChange={setUnit}
           onImageUpload={handleImageUpload}
           onAddElement={addElement}
@@ -285,29 +297,58 @@ export default function UnitEditor({ onBack }) {
           onExport={handleExport}
           onCopyJson={handleCopyJson}
           onImport={handleImport}
-          onTogglePreview={setIsPreviewMode}
           onBack={onBack}
           fileInputRef={fileInputRef}
           generateId={generateId}
         />
       </aside>
 
-      <main className="flex-1 relative overflow-hidden bg-slate-950">
-        <UnitCanvas
-          ref={canvasRef}
-          imageUrl={imageUrl}
-          imageDimensions={imageDimensions}
-          elements={unit.elements}
-          selectedElementId={selectedElementId}
-          isPreviewMode={isPreviewMode}
-          onElementSelect={setSelectedElementId}
-          onElementUpdate={updateElement}
-          unitType={unit.type}
-          userAnswers={userAnswers}
-          onUserAnswer={handleUserAnswer}
-          checked={checked}
-          onCheckAnswers={checkAnswers}
-        />
+      <main className="flex-1 relative overflow-hidden bg-slate-950 flex flex-col">
+        <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
+              <button
+                onClick={() => setIsPreviewMode(false)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${!isPreviewMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+              >
+                ✏️ Редактор
+              </button>
+              <button
+                onClick={() => setIsPreviewMode(true)}
+                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${isPreviewMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+              >
+                👁️ Предпросмотр
+              </button>
+            </div>
+          </div>
+
+          {isPreviewMode && (
+            <button
+              onClick={checkAnswers}
+              className="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition"
+            >
+              Проверить ответы
+            </button>
+          )}
+        </header>
+
+        <div className="flex-1 relative overflow-hidden">
+          <UnitCanvas
+            ref={canvasRef}
+            imageUrl={imageUrl}
+            imageDimensions={imageDimensions}
+            elements={unit.elements}
+            selectedElementId={selectedElementId}
+            isPreviewMode={isPreviewMode}
+            onElementSelect={setSelectedElementId}
+            onElementUpdate={updateElement}
+            unitType={unit.type}
+            userAnswers={userAnswers}
+            onUserAnswer={handleUserAnswer}
+            checked={checked}
+            onCheckAnswers={checkAnswers}
+          />
+        </div>
       </main>
 
       {exportJson && (

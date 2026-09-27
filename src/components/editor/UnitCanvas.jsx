@@ -133,7 +133,7 @@ const UnitCanvas = forwardRef((props, ref) => {
     return (
       <div
         ref={containerRef}
-        className="relative flex-1 min-h-0 w-full h-full bg-slate-900 overflow-hidden flex items-center justify-center"
+        className="relative flex-1 min-h-0 w-full h-full bg-slate-950 overflow-auto flex items-center justify-center"
       >
         <div className="text-center text-slate-500 p-8">
           <p className="text-lg">Загрузите PNG страницу</p>
@@ -148,7 +148,7 @@ const UnitCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 min-h-0 w-full h-full bg-slate-900 overflow-hidden"
+      className="relative flex-1 min-h-0 w-full h-full bg-slate-950 overflow-hidden"
       onClick={handleCanvasClick}
       tabIndex={0}
     >
