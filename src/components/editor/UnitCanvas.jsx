@@ -145,6 +145,10 @@ const UnitCanvas = forwardRef((props, ref) => {
             height: '100%',
             display: 'block',
             userSelect: 'none',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            zIndex: 1,
           }}
         />
       ) : null}
