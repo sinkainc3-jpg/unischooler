@@ -15,6 +15,7 @@ export default function EditorSidebar({
   onExport,
   onCopyJson,
   onImport,
+  onSave,
   onBack,
   fileInputRef,
   generateId,
