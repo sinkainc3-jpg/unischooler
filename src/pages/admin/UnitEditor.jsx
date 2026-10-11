@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import UnitCanvas from '../../components/editor/UnitCanvas';
 import EditorSidebar from '../../components/editor/EditorSidebar';
+import UnitFrame from '../../components/UnitFrame';
+import TrUnitFrame from '../../components/TrUnitFrame';
+import { supabase } from '../../lib/supabase';
 
 const DEFAULT_UNIT = {
   id: '',
@@ -22,6 +25,7 @@ export default function UnitEditor({ onBack }) {
   const [exportJson, setExportJson] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [checked, setChecked] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(null);
   const fileInputRef = useRef(null);
   const canvasRef = useRef(null);
 
@@ -278,10 +282,125 @@ export default function UnitEditor({ onBack }) {
     reader.readAsText(file);
   };
 
+  const handleSave = useCallback(async () => {
+    setSaveStatus(null);
+    try {
+      let imagePath = unit.imagePath;
+      let publicUrl = unit.image;
+
+      // Если выбрали новое изображение, загружаем в Supabase Storage
+      if (imagePath && !imagePath.startsWith('/') && imagePath !== unit.imagePath) {
+        // Новый файл — загружаем (imagePath здесь — это имя файла из input)
+        const file = new File([], imagePath, { type: 'image/png' });
+        const fileName = `unit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`;
+        const { error: uploadError, data } = await supabase
+          .storage
+          .from('unit-images')
+          .upload(fileName, file, { upsert: true });
+
+        if (uploadError) throw new Error('Ошибка загрузки изображения: ' + uploadError.message);
+
+        const { data: urlData } = supabase
+          .storage
+          .from('unit-images')
+          .getPublicUrl(fileName);
+
+        publicUrl = urlData.publicUrl;
+        imagePath = fileName;
+      } else if (unit.image && unit.image.startsWith('blob:')) {
+        // Если изображение — это blob URL (только что загрузили), конвертируем и загружаем
+        const blob = await fetch(unit.image).then(r => r.blob());
+        const fileName = `unit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`;
+        const { error: uploadError, data } = await supabase
+          .storage
+          .from('unit-images')
+          .upload(fileName, blob, { upsert: true });
+
+        if (uploadError) throw new Error('Ошибка загрузки изображения: ' + uploadError.message);
+
+        const { data: urlData } = supabase
+          .storage
+          .from('unit-images')
+          .getPublicUrl(fileName);
+
+        publicUrl = urlData.publicUrl;
+        imagePath = fileName;
+      }
+
+      // Подготавливаем данные для сохранения в БД
+      const elementsData = unit.elements.map((el) => ({
+        id: el.id,
+        type: el.type,
+        x: Number(el.x.toFixed(1)),
+        y: Number(el.y.toFixed(1)),
+        width: Number(el.width.toFixed(1)),
+        height: Number(el.height.toFixed(1)),
+        ...(el.type === 'input' && { correctAnswer: el.correctAnswer }),
+        ...(el.type === 'text' && {
+          content: el.content,
+          fontSize: el.fontSize,
+          fontWeight: el.fontWeight,
+          textAlign: el.textAlign,
+          textColor: el.textColor,
+        }),
+        ...(el.type === 'choice' && {
+          options: el.options,
+          correctOptionId: el.correctOptionId,
+          fontSize: el.fontSize,
+          optionSize: el.optionSize,
+          optionGap: el.optionGap,
+          optionSpacing: el.optionSpacing,
+          optionTextColor: el.optionTextColor,
+        }),
+      }));
+
+      const unitToSave = {
+        id: unit.id || `unit-${Date.now()}`,
+        subject: unit.subject || 'math',
+        type: unit.type || 'learn',
+        title: unit.title || '',
+        hint: unit.hint || '',
+        image_path: publicUrl || imagePath,
+        elements: elementsData,
+      };
+
+      // Сохраняем или обновляем в базе данных
+      const { error: dbError } = await supabase
+        .from('units')
+        .upsert(unitToSave, { onConflict: 'id' });
+
+      if (dbError) throw new Error('Ошибка сохранения в БД: ' + dbError.message);
+
+      setSaveStatus({
+        type: 'success',
+        message: 'Юнит успешно сохранен!',
+      });
+
+      // Сбрасываем форму или можно оставить как есть
+      setUnit({
+        id: '',
+        subject: 'math',
+        type: 'learn',
+        title: '',
+        image: '',
+        imagePath: '',
+        hint: '',
+        elements: [],
+      });
+      setImageUrl(null);
+    } catch (err) {
+      console.error('Save error:', err);
+      setSaveStatus({
+        type: 'error',
+        message: 'Ошибка сохранения: ' + err.message,
+      });
+    }
+  }, [unit]);
+
   const selectedElement = unit.elements.find((el) => el.id === selectedElementId);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-hidden">
+    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-auto">
       <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 flex-shrink-0 h-full">
         <EditorSidebar
           unit={unit}
@@ -297,13 +416,14 @@ export default function UnitEditor({ onBack }) {
           onExport={handleExport}
           onCopyJson={handleCopyJson}
           onImport={handleImport}
+          onSave={handleSave}
           onBack={onBack}
           fileInputRef={fileInputRef}
           generateId={generateId}
         />
       </aside>
 
-      <main className="flex-1 relative overflow-hidden bg-slate-950 flex flex-col">
+      <main className={`flex-1 relative overflow-auto h-full w-full bg-slate-950 p-6 flex items-start ${unit?.type === 'learn' ? 'justify-center' : 'justify-start'}`}>
         <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
@@ -332,22 +452,107 @@ export default function UnitEditor({ onBack }) {
           )}
         </header>
 
-        <div className="flex-1 relative overflow-hidden">
-          <UnitCanvas
-            ref={canvasRef}
-            imageUrl={imageUrl}
-            imageDimensions={imageDimensions}
-            elements={unit.elements}
-            selectedElementId={selectedElementId}
-            isPreviewMode={isPreviewMode}
-            onElementSelect={setSelectedElementId}
-            onElementUpdate={updateElement}
-            unitType={unit.type}
-            userAnswers={userAnswers}
-            onUserAnswer={handleUserAnswer}
-            checked={checked}
-            onCheckAnswers={checkAnswers}
-          />
+        <div className="flex-1 relative overflow-auto w-full h-full">
+          {(() => {
+            const frameProps = {
+              unitNumber: 1,
+              onPrev: () => {},
+              onNext: () => {},
+              isFirst: true,
+              isLast: true,
+            };
+
+            // Контейнер с масштабированием для рамки
+            const ScaledFrame = ({ children }) => (
+              <div className={`w-full h-auto min-w-fit flex-shrink-0 ${unit?.type === 'learn' ? 'mx-auto' : ''}`}>
+                {children}
+              </div>
+            );
+
+            if (unit?.subject === 'math' && unit?.type === 'learn') {
+              return (
+                <ScaledFrame>
+                  <UnitFrame
+                    {...frameProps}
+                    onRoadmapClick={() => {}}
+                    onNumberClick={() => {}}
+                    onDateClick={() => {}}
+                    onHelpClick={() => {}}
+                    isAllCorrect={false}
+                  >
+                    <UnitCanvas
+                      ref={canvasRef}
+                      imageUrl={imageUrl}
+                      imageDimensions={imageDimensions}
+                      elements={unit.elements}
+                      selectedElementId={selectedElementId}
+                      isPreviewMode={isPreviewMode}
+                      onElementSelect={setSelectedElementId}
+                      onElementUpdate={updateElement}
+                      unitType={unit.type}
+                      unit={unit}
+                      userAnswers={userAnswers}
+                      onUserAnswer={handleUserAnswer}
+                      checked={checked}
+                      onCheckAnswers={checkAnswers}
+                    />
+                  </UnitFrame>
+                </ScaledFrame>
+              );
+            }
+
+            if (unit?.subject === 'math' && unit?.type === 'train') {
+              return (
+                <ScaledFrame>
+                  <TrUnitFrame
+                    {...frameProps}
+                    score={0}
+                    isAllCorrect={false}
+                    isChecked={false}
+                    onLevelClick={() => {}}
+                    onNumberClick={() => {}}
+                    onDateClick={() => {}}
+                  >
+                    <UnitCanvas
+                      ref={canvasRef}
+                      imageUrl={imageUrl}
+                      imageDimensions={imageDimensions}
+                      elements={unit.elements}
+                      selectedElementId={selectedElementId}
+                      isPreviewMode={isPreviewMode}
+                      onElementSelect={setSelectedElementId}
+                      onElementUpdate={updateElement}
+                      unitType={unit.type}
+                      unit={unit}
+                      userAnswers={userAnswers}
+                      onUserAnswer={handleUserAnswer}
+                      checked={checked}
+                      onCheckAnswers={checkAnswers}
+                    />
+                  </TrUnitFrame>
+                </ScaledFrame>
+              );
+            }
+
+            return (
+              <UnitCanvas
+                ref={canvasRef}
+                imageUrl={imageUrl}
+                imageDimensions={imageDimensions}
+                elements={unit.elements}
+                selectedElementId={selectedElementId}
+                isPreviewMode={isPreviewMode}
+                onElementSelect={setSelectedElementId}
+                onElementUpdate={updateElement}
+                unitType={unit.type}
+                unit={unit}
+                userAnswers={userAnswers}
+                onUserAnswer={handleUserAnswer}
+                checked={checked}
+                onCheckAnswers={checkAnswers}
+              />
+            );
+          })()}
         </div>
       </main>
 

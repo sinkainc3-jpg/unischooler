@@ -129,40 +129,11 @@ const UnitCanvas = forwardRef((props, ref) => {
     [isPreviewMode, imageUrl, onElementSelect]
   );
 
-  if (!imageUrl) {
-    return (
-      <div
-        ref={containerRef}
-        className="relative flex-1 min-h-0 w-full h-full bg-slate-950 overflow-auto flex items-center justify-center"
-      >
-        <div className="text-center text-slate-500 p-8">
-          <p className="text-lg">Загрузите PNG страницу</p>
-          <p className="text-sm mt-1">
-            Используйте панель слева
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={containerRef}
-      className="relative flex-1 min-h-0 w-full h-full bg-slate-950 overflow-hidden"
-      onClick={handleCanvasClick}
-      tabIndex={0}
-    >
-      {/* Stage — область PNG + overlay элементов */}
-      <div
-        className="absolute"
-        style={{
-          left: imageLayout.x,
-          top: imageLayout.y,
-          width: imageLayout.width,
-          height: imageLayout.height,
-        }}
-      >
-        {/* PNG — всегда в DOM, когда есть imageUrl */}
+  // Создаем детей для холста - прозрачный контент, только PNG и элементы
+  const canvasChildren = (
+    <>
+      {/* PNG — в DOM, когда есть imageUrl, иначе пусто (прозрачно) */}
+      {imageUrl ? (
         <img
           ref={imageRef}
           src={imageUrl}
@@ -176,22 +147,25 @@ const UnitCanvas = forwardRef((props, ref) => {
             userSelect: 'none',
           }}
         />
+      ) : null}
 
-        {/* Рамка canvas в режиме редактора */}
-        {!isPreviewMode && (
-          <div
-            className="absolute inset-0 border-2 border-dashed border-indigo-500/50 pointer-events-none"
-          />
-        )}
-
-        {/* Overlay элементов — те же размеры, что PNG */}
+      {/* Рамка canvas в режиме редактора */}
+      {!isPreviewMode && (
         <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-          }}
-        >
-          {elements.map((element) => (
+          className="absolute inset-0 border-2 border-dashed border-indigo-500/50 pointer-events-none"
+        />
+      )}
+
+      {/* Overlay элементов — те же размеры, что PNG/область рамки */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          zIndex: 10, // Над PNG, под UI рамки
+        }}
+      >
+        {elements && elements.length > 0 ? (
+          elements.map((element) => (
             <EditorElement
               key={element.id}
               element={element}
@@ -205,8 +179,61 @@ const UnitCanvas = forwardRef((props, ref) => {
               onUserAnswer={onUserAnswer}
               checked={checked}
             />
-          ))}
+          ))
+        ) : null}
+      </div>
+    </>
+  );
+
+  // В режиме редактора — базовый холст
+  if (!isPreviewMode) {
+    return (
+      <div
+        ref={containerRef}
+        className="relative w-full h-full min-h-0 bg-transparent overflow-hidden"
+        onClick={handleCanvasClick}
+        tabIndex={0}
+      >
+        <div
+          className="absolute"
+          style={{
+            left: imageLayout.x,
+            top: imageLayout.y,
+            width: imageLayout.width,
+            height: imageLayout.height,
+          }}
+        >
+          {canvasChildren}
         </div>
+
+        {imageLayout.width > 0 && (
+          <div className="absolute bottom-2 right-2 text-xs text-slate-600 bg-slate-900/50 px-2 py-1 rounded">
+            {Math.round(imageLayout.width)} ×{' '}
+            {Math.round(imageLayout.height)}px
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // В режиме предпросмотра — базовый холст с кнопкой проверки
+  return (
+    <div
+      ref={containerRef}
+      className="relative flex-1 min-h-0 w-full h-full bg-transparent overflow-hidden"
+      onClick={handleCanvasClick}
+      tabIndex={0}
+    >
+      <div
+        className="absolute"
+        style={{
+          left: imageLayout.x,
+          top: imageLayout.y,
+          width: imageLayout.width,
+          height: imageLayout.height,
+        }}
+      >
+        {canvasChildren}
       </div>
 
       {isPreviewMode && (

@@ -276,6 +276,14 @@ export default function EditorSidebar({
             Импорт JSON
           </button>
         </label>
+
+        <button
+          onClick={onSave}
+          disabled={!unit.title}
+          className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-semibold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Сохранить юнит
+        </button>
       </div>
     </div>
   );
