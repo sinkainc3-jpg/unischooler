@@ -1,19 +1,50 @@
 import React, { useState } from 'react';
 import { unitsData } from './data/units';
-import UnitFrame from './components/UnitFrame';
-import TrUnitFrame from './components/TrUnitFrame';
 import Alien from './components/Alien';
 import Calendar from './components/Calendar';
 import UnitEditor from './pages/admin/UnitEditor';
+import UnitBank from './pages/admin/UnitBank';
+import UniversalUnitFrame from './components/UniversalUnitFrame';
 
 const PRAISE_PHRASES = ['Так держать!', 'Хорошая работа!', 'Правильно!'];
 const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получится!', 'Не расстраивайся!', 'Ты сможешь!'];
 
+// Преобразует юнит из Supabase (elements, проценты) в формат плеера (fields/labels).
+function unitFromDb(unit) {
+  const elements = Array.isArray(unit.elements) ? unit.elements : [];
+  return {
+    ...unit,
+    image: unit.image || unit.image_path || null,
+    hint: unit.hint || '',
+    labels: elements
+      .filter((el) => el.type === 'text')
+      .map((el) => ({
+        id: el.id,
+        text: el.content || '',
+        top: `${el.y}%`,
+        left: `${el.x}%`,
+        fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+      })),
+    fields: elements
+      .filter((el) => el.type === 'input')
+      .map((el) => ({
+        id: el.id,
+        top: `${el.y}%`,
+        left: `${el.x}%`,
+        width: `${el.width}%`,
+        height: el.height ? `${el.height}%` : 'auto',
+        correctAnswer: el.correctAnswer || '',
+      })),
+  };
+}
+
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('unit');
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
+  const [openedUnit, setOpenedUnit] = useState(null);
 
-  const currentUnit = unitsData?.[currentUnitIndex] || unitsData?.[0] || {};
+  const activeUnits = openedUnit ? [openedUnit] : unitsData;
+  const currentUnit = activeUnits?.[currentUnitIndex] || activeUnits?.[0] || {};
   const isTrain = currentUnit.type === 'train';
   const [userAnswers, setUserAnswers] = useState({});
   const [isChecked, setIsChecked] = useState(false);
@@ -57,7 +88,7 @@ export default function App() {
   };
 
   const handleNext = () => {
-    if (unitsData && currentUnitIndex < unitsData.length - 1) {
+    if (activeUnits && currentUnitIndex < activeUnits.length - 1) {
       setCurrentUnitIndex((prev) => prev + 1);
       setIsChecked(false);
     }
@@ -157,6 +188,22 @@ export default function App() {
     );
   }
 
+  if (currentScreen === 'unitbank') {
+    return (
+      <UnitBank
+        onBack={() => setCurrentScreen('unit')}
+        onOpenUnit={(unit) => {
+          setOpenedUnit(unitFromDb(unit));
+          setCurrentUnitIndex(0);
+          setUserAnswers({});
+          setIsChecked(false);
+          setPraise('');
+          setCurrentScreen('unit');
+        }}
+      />
+    );
+  }
+
   // ОСНОВНОЙ ЭКРАН ЮНИТЫ
   return (
     <div
@@ -164,20 +211,6 @@ export default function App() {
       style={{ backgroundImage: "url('/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-radial from-slate-950/30 via-slate-950/70 to-slate-950/95 pointer-events-none -z-0" />
-
-      {!isTrain && (
-        <button
-          onClick={() => setCurrentScreen('level')}
-          title="Выбор уровня"
-          className="absolute z-20 flex items-center justify-center w-6 h-6 bg-slate-900/80 border border-slate-700 rounded-full text-indigo-300 font-bold text-base hover:bg-indigo-600 hover:text-white transition-all duration-150 cursor-pointer backdrop-blur-sm shadow-[0_0_15px_rgba(79,70,229,0.2)] -translate-y-1/2"
-          style={{
-            top: '44%',
-            left: '31%',
-          }}
-        >
-          <span className="block -rotate-90">n</span>
-        </button>
-      )}
 
       {isChecked && praise && (
         <div
@@ -196,89 +229,42 @@ export default function App() {
         </div>
       )}
 
-      {/* Кнопка входа в конструктор */}
-      <button
-        onClick={() => setCurrentScreen('adminEditor')}
-        className="fixed top-4 right-4 z-50 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
-      >
-        <span>✏️</span> Конструктор
-      </button>
+      {/* Кнопки админки */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <button
+          onClick={() => setCurrentScreen('unitbank')}
+          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+        >
+          <span>📚</span> Банк юнитов
+        </button>
+        <button
+          onClick={() => setCurrentScreen('adminEditor')}
+          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+        >
+          <span>✏️</span> Конструктор
+        </button>
+      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl">
 
-        {/* РАМКА ЮНИТА — УЧЕБНАЯ ИЛИ ТРЕНИРОВОЧНАЯ */}
-        {isTrain ? (
-          <TrUnitFrame
-            unitNumber={currentUnitIndex + 1}
-            score={score}
-            isAllCorrect={isAllCorrect}
-            isChecked={isChecked}
-            onPrev={handlePrev}
-            onNext={handleNext}
-            isFirst={currentUnitIndex === 0}
-            isLast={!unitsData || currentUnitIndex === unitsData.length - 1}
-            onLevelClick={() => setCurrentScreen('level')}
-            onNumberClick={() => setCurrentScreen('unitlist')}
-            onDateClick={() => setCurrentScreen('calendar')}
-          >
-            <div className="relative w-full h-full">
-              {currentUnit.fields?.map((field) => {
-                const answerKey = `${currentUnit.id}-${field.id}`;
-                const userVal = userAnswers[answerKey] || '';
-                const isCorrect = userVal.trim().toLowerCase() === field.correctAnswer?.trim().toLowerCase();
-
-                let statusStyle = 'border-indigo-500/60 bg-white/90 text-slate-900 focus:border-indigo-600';
-                if (isChecked) {
-                  statusStyle = isCorrect
-                    ? 'border-green-600 bg-green-100 text-green-950 font-bold'
-                    : 'border-red-600 bg-red-100 text-red-950 font-bold';
-                }
-
-                return (
-                  <div
-                    key={field.id}
-                    className="absolute flex items-center"
-                    style={{
-                      top: field.top,
-                      left: field.left,
-                      width: field.width,
-                      height: field.height || 'auto'
-                    }}
-                  >
-                    <input
-                      type="text"
-                      value={userVal}
-                      onChange={(e) => handleInputChange(field.id, e.target.value)}
-                      placeholder="..."
-                      className={`w-full px-1.5 py-0 text-xs leading-none border rounded shadow-sm focus:outline-none transition-all ${statusStyle}`}
-                    />
-
-                    {isChecked && (
-                      <span className="absolute -right-7 flex items-center justify-center font-extrabold text-lg drop-shadow">
-                        {isCorrect ? (
-                          <span className="text-green-500 animate-bounce">✓</span>
-                        ) : (
-                          <span className="text-red-500">✗</span>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </TrUnitFrame>
-        ) : (
-          <UnitFrame
+        {/* РАМКА ЮНИТА — ЕДИНЫЙ КВАДРАТНЫЙ ШАБЛОН */}
+        <UniversalUnitFrame
           unitNumber={currentUnitIndex + 1}
+          score={score}
+          subject={currentUnit.subject || 'Математика'}
+          unitType={currentUnit.type || 'learn'}
+          isAllCorrect={isAllCorrect}
+          isChecked={isChecked}
           onPrev={handlePrev}
           onNext={handleNext}
           isFirst={currentUnitIndex === 0}
-          isLast={!unitsData || currentUnitIndex === unitsData.length - 1}
+          isLast={!activeUnits || currentUnitIndex === activeUnits.length - 1}
           onRoadmapClick={() => setCurrentScreen('roadmap')}
+          onLevelClick={() => setCurrentScreen('level')}
           onNumberClick={() => setCurrentScreen('unitlist')}
           onDateClick={() => setCurrentScreen('calendar')}
           onHelpClick={() => setIsHelpOpen((v) => !v)}
-          isAllCorrect={isAllCorrect}
+          onCheck={handleCheck}
         >
           <div className="relative w-full h-full">
             {currentUnit.image && (
@@ -330,6 +316,11 @@ export default function App() {
                     type="text"
                     value={userVal}
                     onChange={(e) => handleInputChange(field.id, e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCheck();
+                      }
+                    }}
                     placeholder="..."
                     className={`w-full px-1.5 py-0 text-xs leading-none border rounded shadow-sm focus:outline-none transition-all ${statusStyle}`}
                   />
@@ -347,8 +338,7 @@ export default function App() {
               );
             })}
           </div>
-        </UnitFrame>
-        )}
+        </UniversalUnitFrame>
 
         {isHelpOpen && (
         <Alien
@@ -358,14 +348,6 @@ export default function App() {
           onClose={() => setIsHelpOpen(false)}
         />
       )}
-
-      {/* КНОПКА ПРОВЕРКИ */}
-        <button
-          onClick={handleCheck}
-          className="mt-4 px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] transition active:scale-95 cursor-pointer"
-        >
-          Проверить ответы
-        </button>
 
       </div>
     </div>

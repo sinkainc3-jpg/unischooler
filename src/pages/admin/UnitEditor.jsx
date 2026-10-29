@@ -1,8 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import UnitCanvas from '../../components/editor/UnitCanvas';
 import EditorSidebar from '../../components/editor/EditorSidebar';
-import UnitFrame from '../../components/UnitFrame';
-import TrUnitFrame from '../../components/TrUnitFrame';
+import UniversalUnitFrame from '../../components/UniversalUnitFrame';
 import { supabase } from '../../lib/supabase';
 
 const DEFAULT_UNIT = {
@@ -15,6 +14,16 @@ const DEFAULT_UNIT = {
   hint: '',
   elements: [],
 };
+
+// Контейнер с масштабированием для рамки. Объявлен на уровне модуля намеренно:
+// если объявлять его внутри рендера UnitEditor, при каждом обновлении состояния
+// создаётся новый тип компонента и React перемонтирует всё поддерево —
+// тогда сбрасываются значения и фокус полей ввода в предпросмотре.
+const ScaledFrame = ({ unitType, children }) => (
+  <div className={`w-full h-auto min-w-fit flex-shrink-0 ${unitType === 'learn' ? 'mx-auto' : ''}`}>
+    {children}
+  </div>
+);
 
 export default function UnitEditor({ onBack }) {
   const [unit, setUnit] = useState(DEFAULT_UNIT);
@@ -54,13 +63,13 @@ export default function UnitEditor({ onBack }) {
         type: 'text',
         x: 10,
         y: 10 + existingCount * 8,
-        width: 80,
-        height: 10,
+        width: 40,
+        height: 8,
         content: 'Текст',
         fontSize: 18,
         fontWeight: 'normal',
         textAlign: 'left',
-        textColor: '#ffffff',
+        textColor: '#1e293b',
       };
     } else if (type === 'input') {
       newElement = {
@@ -68,7 +77,7 @@ export default function UnitEditor({ onBack }) {
         type: 'input',
         x: 10,
         y: 10 + existingCount * 8,
-        width: 15,
+        width: 20,
         height: 6,
         correctAnswer: '',
       };
@@ -79,7 +88,7 @@ export default function UnitEditor({ onBack }) {
         x: 10,
         y: 10 + existingCount * 8,
         width: 40,
-        height: 15,
+        height: 20,
         options: [
           { id: 'option-1', text: 'Вариант 1' },
           { id: 'option-2', text: 'Вариант 2' },
@@ -89,7 +98,7 @@ export default function UnitEditor({ onBack }) {
         optionSize: 18,
         optionGap: 8,
         optionSpacing: 8,
-        optionTextColor: '#ffffff',
+        optionTextColor: '#1e293b',
       };
     } else if (type === 'image') {
       newElement = {
@@ -97,8 +106,8 @@ export default function UnitEditor({ onBack }) {
         type: 'image',
         x: 20,
         y: 20,
-        width: 25,
-        height: 20,
+        width: 30,
+        height: 25,
         src: '',
       };
     }
@@ -456,62 +465,31 @@ export default function UnitEditor({ onBack }) {
           {(() => {
             const frameProps = {
               unitNumber: 1,
+              subject: unit?.subject && unit.subject !== 'math' ? unit.subject : 'Математика',
+              unitType: unit?.type || 'learn',
               onPrev: () => {},
               onNext: () => {},
               isFirst: true,
               isLast: true,
             };
 
-            // Контейнер с масштабированием для рамки
-            const ScaledFrame = ({ children }) => (
-              <div className={`w-full h-auto min-w-fit flex-shrink-0 ${unit?.type === 'learn' ? 'mx-auto' : ''}`}>
-                {children}
-              </div>
-            );
+            // Контейнер с масштабированием для рамки (объявлен на уровне модуля,
+            // иначе React пересоздаёт поддерево на каждый рендер и сбрасывает ввод)
 
-            if (unit?.subject === 'math' && unit?.type === 'learn') {
+            if (unit?.subject === 'math' && (unit?.type === 'learn' || unit?.type === 'train')) {
               return (
-                <ScaledFrame>
-                  <UnitFrame
-                    {...frameProps}
-                    onRoadmapClick={() => {}}
-                    onNumberClick={() => {}}
-                    onDateClick={() => {}}
-                    onHelpClick={() => {}}
-                    isAllCorrect={false}
-                  >
-                    <UnitCanvas
-                      ref={canvasRef}
-                      imageUrl={imageUrl}
-                      imageDimensions={imageDimensions}
-                      elements={unit.elements}
-                      selectedElementId={selectedElementId}
-                      isPreviewMode={isPreviewMode}
-                      onElementSelect={setSelectedElementId}
-                      onElementUpdate={updateElement}
-                      unitType={unit.type}
-                      unit={unit}
-                      userAnswers={userAnswers}
-                      onUserAnswer={handleUserAnswer}
-                      checked={checked}
-                      onCheckAnswers={checkAnswers}
-                    />
-                  </UnitFrame>
-                </ScaledFrame>
-              );
-            }
-
-            if (unit?.subject === 'math' && unit?.type === 'train') {
-              return (
-                <ScaledFrame>
-                  <TrUnitFrame
+                <ScaledFrame unitType={unit?.type}>
+                  <UniversalUnitFrame
                     {...frameProps}
                     score={0}
                     isAllCorrect={false}
                     isChecked={false}
+                    onRoadmapClick={() => {}}
                     onLevelClick={() => {}}
                     onNumberClick={() => {}}
                     onDateClick={() => {}}
+                    onHelpClick={() => {}}
+                    onCheck={checkAnswers}
                   >
                     <UnitCanvas
                       ref={canvasRef}
@@ -529,7 +507,7 @@ export default function UnitEditor({ onBack }) {
                       checked={checked}
                       onCheckAnswers={checkAnswers}
                     />
-                  </TrUnitFrame>
+                  </UniversalUnitFrame>
                 </ScaledFrame>
               );
             }

@@ -2,6 +2,15 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 
 const HANDLE_SIZE = 12;
 
+const MIN_ELEMENT_WIDTH = 5; // %
+const MIN_ELEMENT_HEIGHT = 4; // %
+
+// Защита от нулевых/микроскопических размеров: такой элемент не видно и не за что схватить
+const normalizeSize = (width, height) => ({
+  width: Math.max(MIN_ELEMENT_WIDTH, Math.min(Number(width) || 0, 100)),
+  height: Math.max(MIN_ELEMENT_HEIGHT, Math.min(Number(height) || 0, 100)),
+});
+
 export default function EditorElement({
   element,
   imageLayout,
@@ -13,13 +22,17 @@ export default function EditorElement({
   userAnswers = {},
   onUserAnswer,
   checked = false,
+  onCheckAnswers,
 }) {
   const elementRef = useRef(null);
-  const [localPosition, setLocalPosition] = useState({
-    x: element.x,
-    y: element.y,
-    width: element.width,
-    height: element.height,
+  const [localPosition, setLocalPosition] = useState(() => {
+    const size = normalizeSize(element.width, element.height);
+    return {
+      x: element.x ?? 0,
+      y: element.y ?? 0,
+      width: size.width,
+      height: size.height,
+    };
   });
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -28,6 +41,9 @@ export default function EditorElement({
   const [startPos, setStartPos] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [overlayRect, setOverlayRect] = useState(null);
   const [previewInputValue, setPreviewInputValue] = useState('');
+  // Инлайн-редактирование текста по двойному клику (как в Figma)
+  const [isEditingText, setIsEditingText] = useState(false);
+  const [draftText, setDraftText] = useState('');
 
   const isText = element.type === 'text';
   const isChoice = element.type === 'choice';
@@ -35,7 +51,13 @@ export default function EditorElement({
   const isImage = element.type === 'image';
 
   useEffect(() => {
-    setLocalPosition({ x: element.x, y: element.y, width: element.width, height: element.height });
+    const size = normalizeSize(element.width, element.height);
+    setLocalPosition({
+      x: element.x ?? 0,
+      y: element.y ?? 0,
+      width: size.width,
+      height: size.height,
+    });
   }, [element.x, element.y, element.width, element.height]);
 
   useEffect(() => {
@@ -46,18 +68,19 @@ export default function EditorElement({
   }, [imageLayout]);
 
   const clampPosition = useCallback((x, y, width, height) => {
-    const maxX = 100 - width;
-    const maxY = 100 - height;
+    const size = normalizeSize(width, height);
+    const maxX = 100 - size.width;
+    const maxY = 100 - size.height;
     return {
       x: Math.max(0, Math.min(x, maxX)),
       y: Math.max(0, Math.min(y, maxY)),
-      width: Math.max(3, Math.min(width, 100)),
-      height: Math.max(2, Math.min(height, 100)),
+      width: size.width,
+      height: size.height,
     };
   }, []);
 
   const handlePointerDown = useCallback((e, dragging = true, resizing = false, dir = null) => {
-    if (isPreviewMode) return;
+    if (isPreviewMode || isEditingText) return;
 
     e.stopPropagation();
     onSelect(element.id);
@@ -78,7 +101,7 @@ export default function EditorElement({
       setDragStart({ x: e.clientX, y: e.clientY });
       setStartPos({ x: localPosition.x, y: localPosition.y, width: localPosition.width, height: localPosition.height });
     }
-  }, [element.id, localPosition, onSelect, isPreviewMode, overlayRect]);
+  }, [element.id, localPosition, onSelect, isPreviewMode, overlayRect, isEditingText]);
 
   const handlePointerMove = useCallback((e) => {
     if (!isDragging && !isResizing) return;
@@ -137,7 +160,7 @@ export default function EditorElement({
   }, [isDragging, isResizing]);
 
   const handleKeyDown = useCallback((e) => {
-    if (!isSelected || isPreviewMode) return;
+    if (!isSelected || isPreviewMode || isEditingText) return;
     const step = e.shiftKey ? 1 : 0.1;
     let { x, y, width, height } = localPosition;
     let changed = false;
@@ -156,7 +179,26 @@ export default function EditorElement({
       setLocalPosition(newPos);
       onUpdate(element.id, { x: newPos.x, y: newPos.y, width: newPos.width, height: newPos.height });
     }
-  }, [isSelected, isPreviewMode, localPosition, element.id, onUpdate, clampPosition]);
+  }, [isSelected, isPreviewMode, isEditingText, localPosition, element.id, onUpdate, clampPosition]);
+
+  // ========== ИНЛАЙН-РЕДАКТИРОВАНИЕ ТЕКСТА ==========
+  const startTextEditing = useCallback((e) => {
+    if (isPreviewMode) return;
+    e.stopPropagation();
+    setDraftText(element.content || '');
+    setIsEditingText(true);
+  }, [isPreviewMode, element.content]);
+
+  const finishTextEditing = useCallback((save) => {
+    if (!isEditingText) return;
+    if (save) {
+      const next = draftText;
+      if (next !== (element.content || '')) {
+        onUpdate(element.id, { content: next });
+      }
+    }
+    setIsEditingText(false);
+  }, [isEditingText, draftText, element.id, element.content, onUpdate]);
 
   useEffect(() => {
     if (isSelected) {
@@ -335,6 +377,11 @@ export default function EditorElement({
             setPreviewInputValue(e.target.value);
             if (onUserAnswer) onUserAnswer(element.id, e.target.value);
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && onCheckAnswers) {
+              onCheckAnswers();
+            }
+          }}
           placeholder="Ответ..."
           style={{
             width: '100%',
@@ -369,15 +416,21 @@ export default function EditorElement({
   // ========== EDITOR MODE ==========
   const wrapperStyle = {
     ...style,
+    // Даже если высота в процентах посчиталась нулевой (например, у старых элементов),
+    // рамку элемента всегда видно и за неё можно схватиться мышкой
+    minHeight: '24px',
     cursor: 'move',
     userSelect: 'none',
     touchAction: 'none',
   };
 
+  // Двойной клик по тексту — инлайн-редактирование. Обработчик висит и на обёртке:
+  // pointer capture перенаправляет dblclick на неё, а не на текстовый блок.
   return (
     <div
       ref={elementRef}
       onPointerDown={(e) => handlePointerDown(e, true, false)}
+      onDoubleClick={isText && !isEditingText ? startTextEditing : undefined}
       onPointerMove={isDragging || isResizing ? handlePointerMove : undefined}
       onPointerUp={isDragging || isResizing ? handlePointerUp : undefined}
       onPointerCancel={isDragging || isResizing ? handlePointerUp : undefined}
@@ -423,31 +476,76 @@ export default function EditorElement({
         )}
       </div>
 
-      {/* Text content - draggable via wrapper */}
+      {/* Text content - draggable via wrapper; двойной клик — инлайн-редактирование */}
       {isText && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '2px',
-            fontSize: `${element.fontSize || 18}px`,
-            fontWeight: element.fontWeight || 'normal',
-            textAlign: element.textAlign || 'left',
-            color: element.textColor || '#ffffff',
-            textShadow: '0 0 3px #000, 1px 1px 2px #000, -1px -1px 2px #000',
-            lineHeight: '1.3',
-            whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word',
-            overflow: 'hidden',
-            pointerEvents: 'none',
-            minHeight: '20px',
-          }}
-        >
-          {element.content || 'Новый текст'}
-        </div>
+        isEditingText ? (
+          <input
+            type="text"
+            autoFocus
+            value={draftText}
+            onChange={(e) => setDraftText(e.target.value)}
+            onFocus={(e) => e.target.select()}
+            onBlur={() => finishTextEditing(true)}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                finishTextEditing(true);
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                finishTextEditing(false);
+              }
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onDoubleClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              boxSizing: 'border-box',
+              padding: '2px 4px',
+              background: 'rgba(255, 255, 255, 0.97)',
+              border: '2px solid #6366f1',
+              borderRadius: '4px',
+              outline: 'none',
+              fontSize: `${element.fontSize || 18}px`,
+              fontWeight: element.fontWeight || 'normal',
+              textAlign: element.textAlign || 'left',
+              color: element.textColor || '#1e293b',
+              lineHeight: '1.3',
+              zIndex: 20,
+              cursor: 'text',
+            }}
+          />
+        ) : (
+          <div
+            onDoubleClick={startTextEditing}
+            title="Двойной клик — редактировать текст"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '2px',
+              fontSize: `${element.fontSize || 18}px`,
+              fontWeight: element.fontWeight || 'normal',
+              textAlign: element.textAlign || 'left',
+              color: element.textColor || '#ffffff',
+              textShadow: '0 0 3px #000, 1px 1px 2px #000, -1px -1px 2px #000',
+              lineHeight: '1.3',
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'break-word',
+              overflow: 'hidden',
+              pointerEvents: 'auto',
+              cursor: 'text',
+              minHeight: '20px',
+            }}
+          >
+            {element.content || 'Новый текст'}
+          </div>
+        )
       )}
 
       {/* Choice - NON-INTERACTIVE in editor mode */}

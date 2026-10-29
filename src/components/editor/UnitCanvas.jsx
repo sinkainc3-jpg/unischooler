@@ -95,7 +95,12 @@ const UnitCanvas = forwardRef((props, ref) => {
     if (cw <= 0 || ch <= 0) {
       return;
     }
-    if (nw <= 0 || nh <= 0) {
+
+    // Пока PNG не загружена (или её нет вовсе), холст занимает всю доступную область.
+    // Иначе слой элементов имел бы нулевой размер: новые элементы выглядели бы
+    // тонкими полосками и их нельзя было бы ни увидеть, ни перетащить.
+    if (!imageUrl || nw <= 0 || nh <= 0) {
+      setImageLayout({ x: 0, y: 0, width: cw, height: ch });
       return;
     }
 
@@ -113,7 +118,7 @@ const UnitCanvas = forwardRef((props, ref) => {
       width: displayWidth,
       height: displayHeight,
     });
-  }, [containerSize, imageNaturalSize]);
+  }, [containerSize, imageNaturalSize, imageUrl]);
 
   const handleCanvasClick = useCallback(
     (e) => {
@@ -182,6 +187,7 @@ const UnitCanvas = forwardRef((props, ref) => {
               userAnswers={userAnswers}
               onUserAnswer={onUserAnswer}
               checked={checked}
+              onCheckAnswers={onCheckAnswers}
             />
           ))
         ) : null}
@@ -245,16 +251,6 @@ const UnitCanvas = forwardRef((props, ref) => {
           <div className="bg-slate-900/90 backdrop-blur px-4 py-2 rounded-lg border border-slate-700 text-sm text-slate-300">
             Режим предпросмотра — элементы не редактируются
           </div>
-          <button
-            onClick={onCheckAnswers}
-            className={`px-6 py-2.5 rounded-lg font-semibold text-lg transition ${
-              checked
-                ? 'bg-emerald-600 hover:bg-emerald-500'
-                : 'bg-indigo-600 hover:bg-indigo-500'
-            }`}
-          >
-            {checked ? 'Проверено' : 'Проверить ответ'}
-          </button>
         </div>
       )}
 
