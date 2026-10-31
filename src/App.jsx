@@ -270,33 +270,39 @@ export default function App() {
           onHelpClick={() => setIsHelpOpen((v) => !v)}
           onCheck={handleCheck}
         >
-          <div className="relative w-full h-full">
-            {currentUnit.image && (
-              <img
-                src={currentUnit.image}
-                alt={currentUnit.title || 'Картинка задания'}
-                className="w-full h-auto block select-none"
-              />
+          <div className="relative flex h-full w-full flex-col overflow-hidden">
+            {currentUnit.title && (
+              <h1 className="w-full max-w-full shrink-0 break-words px-6 pt-3 text-center text-xl font-bold text-slate-800 md:px-8 md:pt-4 md:text-2xl">
+                {currentUnit.title}
+              </h1>
             )}
+            <div className="relative min-h-0 w-full flex-1 overflow-hidden">
+              {currentUnit.image && (
+                <img
+                  src={currentUnit.image}
+                  alt={currentUnit.title || 'Картинка задания'}
+                  className="w-full h-auto block select-none"
+                />
+              )}
 
-            {currentUnit.labels?.map((label) => (
-              <span
-                key={label.id}
-                className="absolute font-bold text-slate-900 select-none -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  top: label.top,
-                  left: label.left,
-                  fontSize: label.fontSize || '16px',
-                }}
-              >
-                {label.text}
-              </span>
-            ))}
+              {currentUnit.labels?.map((label) => (
+                <span
+                  key={label.id}
+                  className="absolute font-bold text-slate-900 select-none -translate-x-1/2 -translate-y-1/2"
+                  style={{
+                    top: label.top,
+                    left: label.left,
+                    fontSize: label.fontSize || '16px',
+                  }}
+                >
+                  {label.text}
+                </span>
+              ))}
 
-            {currentUnit.fields?.map((field) => {
-              const answerKey = `${currentUnit.id}-${field.id}`;
-              const userVal = userAnswers[answerKey] || '';
-              const isCorrect = userVal.trim().toLowerCase() === field.correctAnswer?.trim().toLowerCase();
+              {currentUnit.fields?.map((field) => {
+                const answerKey = `${currentUnit.id}-${field.id}`;
+                const userVal = userAnswers[answerKey] || '';
+                const isCorrect = userVal.trim().toLowerCase() === field.correctAnswer?.trim().toLowerCase();
 
               let statusStyle = 'border-indigo-500/60 bg-white/90 text-slate-900 focus:border-indigo-600';
               if (isChecked) {
@@ -305,8 +311,8 @@ export default function App() {
                   : 'border-red-600 bg-red-100 text-red-950 font-bold';
               }
 
-              return (
-                <div
+                return (
+                  <div
                   key={field.id}
                   className="absolute flex items-center"
                   style={{
@@ -338,9 +344,10 @@ export default function App() {
                       )}
                     </span>
                   )}
-                </div>
-              );
-            })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </UniversalUnitFrame>
 
