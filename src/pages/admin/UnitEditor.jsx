@@ -156,12 +156,12 @@ export default function UnitEditor({ onBack, initialUnit }) {
       };
     } else if (type === 'image') {
       newElement = {
-        id: `image-${existingCount + 1}`,
+        id: `img-${Date.now()}`,
         type: 'image',
-        x: 20,
-        y: 20,
-        width: 30,
-        height: 25,
+        x: 60,
+        y: 60,
+        width: 240,
+        height: 240,
         src: '',
       };
     }
@@ -203,7 +203,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
       if (element.type === 'text') baseId = 'text';
       else if (element.type === 'input') baseId = 'input';
       else if (element.type === 'choice') baseId = 'choice';
-      else baseId = 'answer';
+      else if (element.type === 'image') baseId = 'img';
+      else baseId = 'element';
       
       const existingCount = prev.elements.filter((el) => el.type === element.type).length;
       const newElement = {
@@ -398,10 +399,10 @@ export default function UnitEditor({ onBack, initialUnit }) {
       const elementsData = unit.elements.map((el) => ({
         id: el.id,
         type: el.type,
-        x: Number(el.x.toFixed(1)),
-        y: Number(el.y.toFixed(1)),
-        width: Number(el.width.toFixed(1)),
-        height: Number(el.height.toFixed(1)),
+        x: Number((Number(el.x) || 0).toFixed(1)),
+        y: Number((Number(el.y) || 0).toFixed(1)),
+        width: Number((Number(el.width) || 0).toFixed(1)),
+        height: Number((Number(el.height) || 0).toFixed(1)),
         ...(el.type === 'input' && { correctAnswer: el.correctAnswer }),
         ...(el.type === 'text' && {
           content: el.content,
@@ -419,6 +420,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
           optionSpacing: el.optionSpacing,
           optionTextColor: el.optionTextColor,
         }),
+        ...(el.type === 'image' && { src: el.src }),
       }));
 
       const unitId = editingUnitId || unit.id || `unit-${Date.now()}`;

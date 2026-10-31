@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 
 export default function ElementSettings({ element, onUpdate, onDelete }) {
   const [options, setOptions] = useState([]);
   const [newOptionText, setNewOptionText] = useState('');
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   useEffect(() => {
     setOptions(element.options || []);
@@ -13,21 +15,49 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
     onUpdate(element.id, { [key]: numValue });
   };
 
+  const handleImageFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingImage(true);
+      const ext = file.name.split('.').pop();
+      const filePath = `units/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+
+      const { data, error } = await supabase.storage
+        .from('unit-images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('unit-images')
+        .getPublicUrl(filePath);
+
+      onUpdate(element.id, { src: publicUrl });
+    } catch (err) {
+      console.error('Ошибка загрузки картинки в Storage:', err);
+      alert('Ошибка при загрузке картинки: ' + (err.message || err));
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
+    }
+  };
+
   const renderImageSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Загрузить изображение</span>
+        <span className="text-xs text-slate-400">Заменить изображение</span>
         <input
           type="file"
           accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const url = URL.createObjectURL(file);
-            onUpdate(element.id, { src: url });
-          }}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-amber-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-amber-500"
+          onChange={handleImageFileChange}
+          disabled={isUploadingImage}
+          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-amber-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-amber-500 text-xs"
         />
+        {isUploadingImage && (
+          <span className="text-xs text-amber-400 block mt-1">Загрузка в unit-images...</span>
+        )}
       </label>
       <label className="block space-y-1">
         <span className="text-xs text-slate-400">Путь к картинке (src)</span>
@@ -36,10 +66,14 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           value={element.src || ''}
           onChange={(e) => onUpdate(element.id, { src: e.target.value })}
           className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs"
-          placeholder="/content/math/fig1.png"
+          placeholder="https://..."
         />
-        <p className="text-xs text-slate-500 mt-1">Относительный путь для JSON (файл не загружается).</p>
       </label>
+      {element.src && (
+        <div className="w-full h-32 bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-center overflow-hidden">
+          <img src={element.src} alt="Предпросмотр" className="max-w-full max-h-full object-contain" />
+        </div>
+      )}
     </div>
   );
 
@@ -338,52 +372,52 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">X (%)</span>
+          <span className="text-xs text-slate-400">X {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
-            step="0.1"
+            step={element.type === 'image' ? '1' : '0.1'}
             min="0"
-            max="100"
-            value={element.x}
+            max={element.type === 'image' ? undefined : 100}
+            value={element.x ?? 0}
             onChange={(e) => handleChange('x', e.target.value)}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Y (%)</span>
+          <span className="text-xs text-slate-400">Y {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
-            step="0.1"
+            step={element.type === 'image' ? '1' : '0.1'}
             min="0"
-            max="100"
-            value={element.y}
+            max={element.type === 'image' ? undefined : 100}
+            value={element.y ?? 0}
             onChange={(e) => handleChange('y', e.target.value)}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Ширина (%)</span>
+          <span className="text-xs text-slate-400">Ширина {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
-            step="0.1"
-            min="0.1"
-            max="100"
-            value={element.width}
+            step={element.type === 'image' ? '1' : '0.1'}
+            min={element.type === 'image' ? '10' : '0.1'}
+            max={element.type === 'image' ? undefined : 100}
+            value={element.width ?? 0}
             onChange={(e) => handleChange('width', e.target.value)}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Высота (%)</span>
+          <span className="text-xs text-slate-400">Высота {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
-            step="0.1"
-            min="0.1"
-            max="100"
-            value={element.height}
+            step={element.type === 'image' ? '1' : '0.1'}
+            min={element.type === 'image' ? '10' : '0.1'}
+            max={element.type === 'image' ? undefined : 100}
+            value={element.height ?? 0}
             onChange={(e) => handleChange('height', e.target.value)}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />

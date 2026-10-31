@@ -6,10 +6,18 @@ const MIN_ELEMENT_WIDTH = 5; // %
 const MIN_ELEMENT_HEIGHT = 4; // %
 
 // Защита от нулевых/микроскопических размеров: такой элемент не видно и не за что схватить
-const normalizeSize = (width, height) => ({
-  width: Math.max(MIN_ELEMENT_WIDTH, Math.min(Number(width) || 0, 100)),
-  height: Math.max(MIN_ELEMENT_HEIGHT, Math.min(Number(height) || 0, 100)),
-});
+const normalizeSize = (width, height, isImg = false) => {
+  if (isImg) {
+    return {
+      width: Math.max(20, Number(width) || 240),
+      height: Math.max(20, Number(height) || 240),
+    };
+  }
+  return {
+    width: Math.max(MIN_ELEMENT_WIDTH, Math.min(Number(width) || 0, 100)),
+    height: Math.max(MIN_ELEMENT_HEIGHT, Math.min(Number(height) || 0, 100)),
+  };
+};
 
 export default function EditorElement({
   element,
@@ -25,11 +33,16 @@ export default function EditorElement({
   onCheckAnswers,
 }) {
   const elementRef = useRef(null);
+  const isText = element.type === 'text';
+  const isChoice = element.type === 'choice';
+  const isInput = element.type === 'input';
+  const isImage = element.type === 'image';
+
   const [localPosition, setLocalPosition] = useState(() => {
-    const size = normalizeSize(element.width, element.height);
+    const size = normalizeSize(element.width, element.height, element.type === 'image');
     return {
-      x: element.x ?? 0,
-      y: element.y ?? 0,
+      x: element.x ?? (element.type === 'image' ? 60 : 0),
+      y: element.y ?? (element.type === 'image' ? 60 : 0),
       width: size.width,
       height: size.height,
     };
@@ -45,20 +58,15 @@ export default function EditorElement({
   const [isEditingText, setIsEditingText] = useState(false);
   const [draftText, setDraftText] = useState('');
 
-  const isText = element.type === 'text';
-  const isChoice = element.type === 'choice';
-  const isInput = element.type === 'input';
-  const isImage = element.type === 'image';
-
   useEffect(() => {
-    const size = normalizeSize(element.width, element.height);
+    const size = normalizeSize(element.width, element.height, isImage);
     setLocalPosition({
-      x: element.x ?? 0,
-      y: element.y ?? 0,
+      x: element.x ?? (isImage ? 60 : 0),
+      y: element.y ?? (isImage ? 60 : 0),
       width: size.width,
       height: size.height,
     });
-  }, [element.x, element.y, element.width, element.height]);
+  }, [element.x, element.y, element.width, element.height, isImage]);
 
   useEffect(() => {
     if (elementRef.current?.parentElement) {
@@ -107,6 +115,46 @@ export default function EditorElement({
     if (!isDragging && !isResizing) return;
     if (!overlayRect) return;
 
+    if (isImage) {
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+
+      if (isDragging) {
+        const newX = Math.max(0, Math.round(startPos.x + dx));
+        const newY = Math.max(0, Math.round(startPos.y + dy));
+        setLocalPosition((prev) => ({ ...prev, x: newX, y: newY }));
+        onUpdate(element.id, { x: newX, y: newY });
+      }
+
+      if (isResizing) {
+        let newWidth = startPos.width;
+        let newHeight = startPos.height;
+        let newX = startPos.x;
+        let newY = startPos.y;
+
+        if (resizeDir.includes('e')) newWidth = Math.max(20, Math.round(startPos.width + dx));
+        if (resizeDir.includes('w')) {
+          newWidth = Math.max(20, Math.round(startPos.width - dx));
+          newX = Math.round(startPos.x + dx);
+        }
+        if (resizeDir.includes('s')) newHeight = Math.max(20, Math.round(startPos.height + dy));
+        if (resizeDir.includes('n')) {
+          newHeight = Math.max(20, Math.round(startPos.height - dy));
+          newY = Math.round(startPos.y + dy);
+        }
+
+        const updated = {
+          x: newX,
+          y: newY,
+          width: newWidth,
+          height: newHeight,
+        };
+        setLocalPosition(updated);
+        onUpdate(element.id, updated);
+      }
+      return;
+    }
+
     const dx = ((e.clientX - dragStart.x) / overlayRect.width) * 100;
     const dy = ((e.clientY - dragStart.y) / overlayRect.height) * 100;
 
@@ -142,7 +190,7 @@ export default function EditorElement({
       setLocalPosition(newPos);
       onUpdate(element.id, { x: newPos.x, y: newPos.y, width: newPos.width, height: newPos.height });
     }
-  }, [isDragging, isResizing, dragStart, startPos, overlayRect, clampPosition, element.id, onUpdate, resizeDir]);
+  }, [isDragging, isResizing, dragStart, startPos, overlayRect, clampPosition, element.id, onUpdate, resizeDir, isImage]);
 
   const handlePointerUp = useCallback((e) => {
     if (!isDragging && !isResizing) return;
@@ -161,25 +209,24 @@ export default function EditorElement({
 
   const handleKeyDown = useCallback((e) => {
     if (!isSelected || isPreviewMode || isEditingText) return;
-    const step = e.shiftKey ? 1 : 0.1;
+    const step = isImage ? (e.shiftKey ? 10 : 1) : (e.shiftKey ? 1 : 0.1);
     let { x, y, width, height } = localPosition;
     let changed = false;
 
     switch (e.key) {
       case 'ArrowLeft': x = Math.max(0, x - step); changed = true; break;
-      case 'ArrowRight': x = Math.min(100 - width, x + step); changed = true; break;
+      case 'ArrowRight': x = Math.max(0, x + step); changed = true; break;
       case 'ArrowUp': y = Math.max(0, y - step); changed = true; break;
-      case 'ArrowDown': y = Math.min(100 - height, y + step); changed = true; break;
+      case 'ArrowDown': y = Math.max(0, y + step); changed = true; break;
       case 'Delete': case 'Backspace': onUpdate(element.id, { _delete: true }); return;
     }
 
     if (changed) {
       e.preventDefault();
-      const newPos = clampPosition(x, y, width, height);
-      setLocalPosition(newPos);
-      onUpdate(element.id, { x: newPos.x, y: newPos.y, width: newPos.width, height: newPos.height });
+      setLocalPosition((prev) => ({ ...prev, x, y }));
+      onUpdate(element.id, { x, y });
     }
-  }, [isSelected, isPreviewMode, isEditingText, localPosition, element.id, onUpdate, clampPosition]);
+  }, [isSelected, isPreviewMode, isEditingText, localPosition, element.id, onUpdate, isImage]);
 
   // ========== ИНЛАЙН-РЕДАКТИРОВАНИЕ ТЕКСТА ==========
   const startTextEditing = useCallback((e) => {
@@ -207,7 +254,13 @@ export default function EditorElement({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSelected, handleKeyDown]);
 
-  const style = {
+  const style = isImage ? {
+    position: 'absolute',
+    left: `${localPosition.x}px`,
+    top: `${localPosition.y}px`,
+    width: `${localPosition.width}px`,
+    height: `${localPosition.height}px`,
+  } : {
     position: 'absolute',
     left: `${localPosition.x}%`,
     top: `${localPosition.y}%`,
@@ -334,19 +387,20 @@ export default function EditorElement({
           ref={elementRef}
           style={style}
         >
-          <img
-            src={src}
-            alt="Элемент-изображение"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              background: '#1e293b',
-            }}
-            onError={(e) => {
-              e.target.style.display = 'none';
-            }}
-          />
+          {src && (
+            <img
+              src={src}
+              alt="Элемент-изображение"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+              }}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          )}
           {!src && (
             <div style={{
               width: '100%',
@@ -356,8 +410,8 @@ export default function EditorElement({
               justifyContent: 'center',
               color: '#64748b',
               fontSize: '12px',
-              background: '#0f172a',
-              border: '1px dashed #334155',
+              background: 'transparent',
+              border: '1px dashed #cbd5e1',
               borderRadius: '4px',
             }}>
               Нет изображения
@@ -617,8 +671,8 @@ export default function EditorElement({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            background: '#0f172a',
-            border: '1px dashed #334155',
+            background: 'transparent',
+            border: element.src ? 'none' : '1px dashed #cbd5e1',
             borderRadius: '4px',
             pointerEvents: 'none',
             userSelect: 'none',
@@ -694,7 +748,9 @@ export default function EditorElement({
               pointerEvents: 'none',
             }}
           >
-            {element.id} • {localPosition.x.toFixed(1)}%, {localPosition.y.toFixed(1)}% • {localPosition.width.toFixed(1)}% × {localPosition.height.toFixed(1)}%
+            {isImage
+              ? `${element.id} • ${Math.round(localPosition.x)}px, ${Math.round(localPosition.y)}px • ${Math.round(localPosition.width)}px × ${Math.round(localPosition.height)}px`
+              : `${element.id} • ${localPosition.x.toFixed(1)}%, ${localPosition.y.toFixed(1)}% • ${localPosition.width.toFixed(1)}% × ${localPosition.height.toFixed(1)}%`}
           </div>
 
           {/* Delete button */}
@@ -752,6 +808,7 @@ export default function EditorElement({
             onPointerDown={(e) => handlePointerDown(e, false, true, 'ne')}
           />
           <div
+            className="cursor-se-resize"
             style={{
               position: 'absolute',
               bottom: -HANDLE_SIZE / 2,
@@ -761,7 +818,7 @@ export default function EditorElement({
               background: '#fff',
               border: '2px solid #6366f1',
               borderRadius: '50%',
-              cursor: 'nwse-resize',
+              cursor: 'se-resize',
               boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
             }}
             onPointerDown={(e) => handlePointerDown(e, false, true, 'se')}

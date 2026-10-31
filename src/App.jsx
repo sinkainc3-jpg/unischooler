@@ -58,14 +58,23 @@ function unitFromDb(unit) {
       })),
     images: elements
       .filter((el) => el.type === 'image')
-      .map((el) => ({
-        id: el.id,
-        top: `${el.y}%`,
-        left: `${el.x}%`,
-        width: el.width != null ? `${el.width}%` : '30%',
-        height: el.height != null ? `${el.height}%` : '25%',
-        src: el.src || '',
-      })),
+      .map((el) => {
+        const toCss = (val, fallback) => {
+          if (val == null) return fallback;
+          if (typeof val === 'number') return `${val}px`;
+          const s = String(val).trim();
+          if (s.endsWith('px') || s.endsWith('%')) return s;
+          return `${s}px`;
+        };
+        return {
+          id: el.id,
+          top: toCss(el.y, '60px'),
+          left: toCss(el.x, '60px'),
+          width: toCss(el.width, '240px'),
+          height: toCss(el.height, '240px'),
+          src: el.src || '',
+        };
+      }),
   };
 }
 

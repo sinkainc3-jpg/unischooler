@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import ElementSettings from './ElementSettings';
+import { supabase } from '../../lib/supabase';
 
 export default function EditorSidebar({
   unit,
@@ -21,6 +22,51 @@ export default function EditorSidebar({
   generateId,
 }) {
   const subject = unit.subject || 'math';
+  const imageElementInputRef = useRef(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const handleImageElementUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingImage(true);
+      const ext = file.name.split('.').pop();
+      const filePath = `units/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+
+      const { data, error } = await supabase.storage
+        .from('unit-images')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('unit-images')
+        .getPublicUrl(filePath);
+
+      const newElement = {
+        id: `img-${Date.now()}`,
+        type: 'image',
+        src: publicUrl,
+        x: 60,
+        y: 60,
+        width: 240,
+        height: 240,
+      };
+
+      onUnitChange((prev) => ({
+        ...prev,
+        elements: [...prev.elements, newElement],
+      }));
+      onSelectElement(newElement.id);
+    } catch (err) {
+      console.error('Ошибка загрузки картинки в Storage:', err);
+      alert('Ошибка при загрузке картинки: ' + (err.message || err));
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
+    }
+  };
 
   const handleSubjectChange = (e) => {
     const newSubject = e.target.value;
@@ -193,11 +239,21 @@ export default function EditorSidebar({
           >
             + Добавить выбор
           </button>
+          <input
+            ref={imageElementInputRef}
+            type="file"
+            accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
+            className="hidden"
+            onChange={handleImageElementUpload}
+          />
           <button
-            onClick={() => onAddElement('image')}
-            className="flex-1 px-3 py-1.5 text-sm bg-amber-600 hover:bg-amber-500 rounded-lg font-medium transition"
+            type="button"
+            onClick={() => imageElementInputRef.current?.click()}
+            disabled={isUploadingImage}
+            className="flex-1 px-3 py-1.5 text-sm bg-amber-600 hover:bg-amber-500 disabled:opacity-50 rounded-lg font-medium transition cursor-pointer"
+            title="Загрузить картинку на холст"
           >
-            + Картинка
+            {isUploadingImage ? 'Загрузка...' : '+ Картинка'}
           </button>
         </div>
 
@@ -215,12 +271,13 @@ export default function EditorSidebar({
                     : 'bg-slate-800/50 hover:bg-slate-800 border border-transparent'
                 }`}
               >
-                <span className={`w-5 h-5 rounded flex items-center justify-center text-xs font-bold ${
+                <span className={`px-1.5 py-0.5 rounded flex items-center justify-center text-[10px] font-bold ${
                   element.type === 'text' ? 'bg-green-500/30 text-green-400' : 
                   element.type === 'choice' ? 'bg-purple-500/30 text-purple-400' :
+                  element.type === 'image' ? 'bg-amber-500/30 text-amber-400' :
                   'bg-indigo-500/30 text-indigo-400'
                 }`}>
-                  {element.type === 'text' ? 'T' : element.type === 'choice' ? 'C' : 'I'}
+                  {element.type === 'text' ? 'T' : element.type === 'choice' ? 'C' : element.type === 'image' ? 'IMG' : 'I'}
                 </span>
                 <span className="flex-1 font-mono text-sm truncate">{element.id}</span>
                 <button
