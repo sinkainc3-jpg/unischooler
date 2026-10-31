@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { unitsData } from './data/units';
 import Alien from './components/Alien';
 import Calendar from './components/Calendar';
@@ -9,7 +9,7 @@ import UniversalUnitFrame from './components/UniversalUnitFrame';
 const PRAISE_PHRASES = ['Так держать!', 'Хорошая работа!', 'Правильно!'];
 const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получится!', 'Не расстраивайся!', 'Ты сможешь!'];
 
-// Преобразует юнит из Supabase (elements, проценты) в формат плеера (fields/labels).
+// Преобразует юнит из Supabase (elements, проценты) в формат плеера (fields/labels/choices/images).
 function unitFromDb(unit) {
   const elements = Array.isArray(unit.elements) ? unit.elements : [];
   return {
@@ -23,7 +23,12 @@ function unitFromDb(unit) {
         text: el.content || '',
         top: `${el.y}%`,
         left: `${el.x}%`,
+        width: el.width != null ? `${el.width}%` : undefined,
+        height: el.height != null ? `${el.height}%` : undefined,
         fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+        fontWeight: el.fontWeight || 'normal',
+        textAlign: el.textAlign || 'left',
+        textColor: el.textColor || '#1e293b',
       })),
     fields: elements
       .filter((el) => el.type === 'input')
@@ -31,9 +36,35 @@ function unitFromDb(unit) {
         id: el.id,
         top: `${el.y}%`,
         left: `${el.x}%`,
-        width: `${el.width}%`,
-        height: el.height ? `${el.height}%` : 'auto',
+        width: el.width != null ? `${el.width}%` : '20%',
+        height: el.height != null ? `${el.height}%` : 'auto',
         correctAnswer: el.correctAnswer || '',
+      })),
+    choices: elements
+      .filter((el) => el.type === 'choice')
+      .map((el) => ({
+        id: el.id,
+        top: `${el.y}%`,
+        left: `${el.x}%`,
+        width: el.width != null ? `${el.width}%` : '40%',
+        height: el.height != null ? `${el.height}%` : 'auto',
+        options: el.options || [],
+        correctOptionId: el.correctOptionId,
+        fontSize: el.fontSize || 18,
+        optionSize: el.optionSize || 18,
+        optionGap: el.optionGap || 8,
+        optionSpacing: el.optionSpacing || 8,
+        optionTextColor: el.optionTextColor || '#1e293b',
+      })),
+    images: elements
+      .filter((el) => el.type === 'image')
+      .map((el) => ({
+        id: el.id,
+        top: `${el.y}%`,
+        left: `${el.x}%`,
+        width: el.width != null ? `${el.width}%` : '30%',
+        height: el.height != null ? `${el.height}%` : '25%',
+        src: el.src || '',
       })),
   };
 }
@@ -52,18 +83,65 @@ export default function App() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [score, setScore] = useState(0);
 
-  const allCorrect = currentUnit.fields?.every((field) => {
-    const answerKey = `${currentUnit.id}-${field.id}`;
-    const userVal = (userAnswers[answerKey] || '').trim().toLowerCase();
-    const correctVal = (field.correctAnswer || '').trim().toLowerCase();
-    return userVal === correctVal;
-  }) ?? false;
+  const containerRef = useRef(null);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [imageNaturalSize, setImageNaturalSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const updateSize = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) {
+        setContainerSize({ width: rect.width, height: rect.height });
+      }
+    };
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(containerRef.current);
+    window.addEventListener('resize', updateSize);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
+  }, [currentScreen, currentUnitIndex, openedUnit]);
+
+  const imageLayout = (() => {
+    const { width: cw, height: ch } = containerSize;
+    const { width: nw, height: nh } = imageNaturalSize;
+    if (!currentUnit.image || nw <= 0 || nh <= 0 || cw <= 0 || ch <= 0) {
+      return { x: 0, y: 0, width: '100%', height: '100%' };
+    }
+    const scale = Math.min(cw / nw, ch / nh);
+    const displayWidth = nw * scale;
+    const displayHeight = nh * scale;
+    return {
+      x: (cw - displayWidth) / 2,
+      y: (ch - displayHeight) / 2,
+      width: displayWidth,
+      height: displayHeight,
+    };
+  })();
+
+  const allCorrect = (
+    ((currentUnit.fields?.length ?? 0) > 0 || (currentUnit.choices?.length ?? 0) > 0) &&
+    (currentUnit.fields?.every((field) => {
+      const answerKey = `${currentUnit.id}-${field.id}`;
+      const userVal = (userAnswers[answerKey] || '').trim().toLowerCase();
+      const correctVal = (field.correctAnswer || '').trim().toLowerCase();
+      return userVal === correctVal;
+    }) ?? true) &&
+    (currentUnit.choices?.every((choice) => {
+      const answerKey = `${currentUnit.id}-${choice.id}`;
+      const userVal = userAnswers[answerKey];
+      return userVal === choice.correctOptionId;
+    }) ?? true)
+  );
 
   const isAllCorrect = isChecked && allCorrect;
 
   const handleCheck = () => {
-    const hasFields = (currentUnit.fields?.length ?? 0) > 0;
-    if (isTrain && hasFields && allCorrect) {
+    const hasInputs = ((currentUnit.fields?.length ?? 0) > 0) || ((currentUnit.choices?.length ?? 0) > 0);
+    if (isTrain && hasInputs && allCorrect) {
       setScore((s) => s + 10);
     }
     const list = allCorrect ? PRAISE_PHRASES : ENCOURAGE_PHRASES;
@@ -84,6 +162,7 @@ export default function App() {
     if (currentUnitIndex > 0) {
       setCurrentUnitIndex((prev) => prev - 1);
       setIsChecked(false);
+      setImageNaturalSize({ width: 0, height: 0 });
     }
   };
 
@@ -91,6 +170,7 @@ export default function App() {
     if (activeUnits && currentUnitIndex < activeUnits.length - 1) {
       setCurrentUnitIndex((prev) => prev + 1);
       setIsChecked(false);
+      setImageNaturalSize({ width: 0, height: 0 });
     }
   };
 
@@ -198,6 +278,7 @@ export default function App() {
           setUserAnswers({});
           setIsChecked(false);
           setPraise('');
+          setImageNaturalSize({ width: 0, height: 0 });
           setCurrentScreen('unit');
         }}
       />
@@ -270,35 +351,58 @@ export default function App() {
           onHelpClick={() => setIsHelpOpen((v) => !v)}
           onCheck={handleCheck}
         >
-          <div className="relative flex h-full w-full flex-col overflow-hidden">
-            {currentUnit.title && (
-              <div className="flex w-full max-w-full shrink-0 items-center justify-center px-6 py-3">
-                <h1 className="max-w-full break-words text-center text-xl font-bold text-slate-800 md:text-2xl select-none">
-                  {currentUnit.title}
-                </h1>
-              </div>
-            )}
-            <div className="relative min-h-0 w-full flex-1 overflow-hidden">
+          <div
+            ref={containerRef}
+            className="relative w-full h-full min-h-0 bg-white overflow-hidden"
+          >
+            <div
+              className="absolute"
+              style={{
+                left: imageLayout.x,
+                top: imageLayout.y,
+                width: imageLayout.width,
+                height: imageLayout.height,
+              }}
+            >
               {currentUnit.image && (
                 <img
                   src={currentUnit.image}
-                  alt={currentUnit.title || 'Картинка задания'}
-                  className="w-full h-auto block select-none"
+                  alt="Фон задания"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                      setImageNaturalSize({ width: img.naturalWidth, height: img.naturalHeight });
+                    }
+                  }}
+                  draggable={false}
+                  className="absolute inset-0 w-full h-full block select-none pointer-events-none"
                 />
               )}
 
               {currentUnit.labels?.map((label) => (
-                <span
+                <div
                   key={label.id}
-                  className="absolute font-bold text-slate-900 select-none -translate-x-1/2 -translate-y-1/2"
+                  className="absolute select-none"
                   style={{
                     top: label.top,
                     left: label.left,
-                    fontSize: label.fontSize || '16px',
+                    width: label.width || 'auto',
+                    height: label.height || 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: label.textAlign === 'center' ? 'center' : label.textAlign === 'right' ? 'flex-end' : 'flex-start',
+                    overflow: 'hidden',
+                    fontSize: label.fontSize || '18px',
+                    fontWeight: label.fontWeight || 'normal',
+                    textAlign: label.textAlign || 'left',
+                    color: label.textColor || '#1e293b',
+                    lineHeight: '1.2',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
                   }}
                 >
                   {label.text}
-                </span>
+                </div>
               ))}
 
               {currentUnit.fields?.map((field) => {
@@ -306,49 +410,143 @@ export default function App() {
                 const userVal = userAnswers[answerKey] || '';
                 const isCorrect = userVal.trim().toLowerCase() === field.correctAnswer?.trim().toLowerCase();
 
-              let statusStyle = 'border-indigo-500/60 bg-white/90 text-slate-900 focus:border-indigo-600';
-              if (isChecked) {
-                statusStyle = isCorrect
-                  ? 'border-green-600 bg-green-100 text-green-950 font-bold'
-                  : 'border-red-600 bg-red-100 text-red-950 font-bold';
-              }
+                let statusStyle = 'border-indigo-500/60 bg-white/90 text-slate-900 focus:border-indigo-600';
+                if (isChecked) {
+                  statusStyle = isCorrect
+                    ? 'border-green-600 bg-green-100 text-green-950 font-bold'
+                    : 'border-red-600 bg-red-100 text-red-950 font-bold';
+                }
 
                 return (
                   <div
-                  key={field.id}
-                  className="absolute flex items-center"
-                  style={{
-                    top: field.top,
-                    left: field.left,
-                    width: field.width,
-                    height: field.height || 'auto'
-                  }}
-                >
-                  <input
-                    type="text"
-                    value={userVal}
-                    onChange={(e) => handleInputChange(field.id, e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleCheck();
-                      }
+                    key={field.id}
+                    className="absolute flex items-center"
+                    style={{
+                      top: field.top,
+                      left: field.left,
+                      width: field.width,
+                      height: field.height || 'auto',
                     }}
-                    placeholder="..."
-                    className={`w-full px-1.5 py-0 text-xs leading-none border rounded shadow-sm focus:outline-none transition-all ${statusStyle}`}
-                  />
+                  >
+                    <input
+                      type="text"
+                      value={userVal}
+                      onChange={(e) => handleInputChange(field.id, e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleCheck();
+                        }
+                      }}
+                      placeholder="..."
+                      className={`w-full h-full px-1.5 py-0 text-xs leading-none border rounded shadow-sm focus:outline-none transition-all ${statusStyle}`}
+                    />
 
-                  {isChecked && (
-                    <span className="absolute -right-7 flex items-center justify-center font-extrabold text-lg drop-shadow">
-                      {isCorrect ? (
-                        <span className="text-green-500 animate-bounce">✓</span>
-                      ) : (
-                        <span className="text-red-500">✗</span>
-                      )}
-                    </span>
-                  )}
+                    {isChecked && (
+                      <span className="absolute -right-7 flex items-center justify-center font-extrabold text-lg drop-shadow">
+                        {isCorrect ? (
+                          <span className="text-green-500 animate-bounce">✓</span>
+                        ) : (
+                          <span className="text-red-500">✗</span>
+                        )}
+                      </span>
+                    )}
                   </div>
                 );
               })}
+
+              {currentUnit.choices?.map((choice) => {
+                const answerKey = `${currentUnit.id}-${choice.id}`;
+                const userAnswer = userAnswers[answerKey];
+                const showResult = isChecked && !!userAnswer;
+                return (
+                  <div
+                    key={choice.id}
+                    className="absolute"
+                    style={{
+                      top: choice.top,
+                      left: choice.left,
+                      width: choice.width,
+                      height: choice.height,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: `${choice.optionSpacing || 8}px`,
+                        padding: '4px',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      {(choice.options || []).map((opt) => (
+                        <label
+                          key={opt.id}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: `${choice.optionGap || 8}px`,
+                            padding: '4px 8px',
+                            background: '#fff',
+                            border: '1px solid',
+                            borderColor: showResult
+                              ? (opt.id === choice.correctOptionId ? '#22c55e' : (opt.id === userAnswer ? '#ef4444' : '#cbd5e1'))
+                              : '#cbd5e1',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            fontSize: `${choice.fontSize || 16}px`,
+                            color: choice.optionTextColor || '#1e293b',
+                          }}
+                        >
+                          <input
+                            type="radio"
+                            name={`choice-${choice.id}`}
+                            value={opt.id}
+                            checked={userAnswer === opt.id}
+                            onChange={() => handleInputChange(choice.id, opt.id)}
+                            style={{
+                              width: `${choice.optionSize || 16}px`,
+                              height: `${choice.optionSize || 16}px`,
+                              accentColor: '#6366f1',
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <span style={{ flex: 1 }}>{opt.text}</span>
+                          {showResult && opt.id === choice.correctOptionId && (
+                            <span style={{ color: '#22c55e', fontWeight: 'bold' }}>✓</span>
+                          )}
+                          {showResult && opt.id === userAnswer && opt.id !== choice.correctOptionId && (
+                            <span style={{ color: '#ef4444', fontWeight: 'bold' }}>✗</span>
+                          )}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {currentUnit.images?.map((img) => (
+                <div
+                  key={img.id}
+                  className="absolute"
+                  style={{
+                    top: img.top,
+                    left: img.left,
+                    width: img.width,
+                    height: img.height,
+                  }}
+                >
+                  {img.src && (
+                    <img
+                      src={img.src}
+                      alt="Элемент"
+                      className="w-full h-full object-contain pointer-events-none select-none"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </UniversalUnitFrame>
