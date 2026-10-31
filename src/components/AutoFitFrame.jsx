@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export const BASE_WIDTH = 760;
-export const BASE_HEIGHT = 680;
+export const BASE_WIDTH = 920;
+export const BASE_HEIGHT = 660;
 
 export default function AutoFitFrame({
   children,
@@ -23,10 +23,9 @@ export default function AutoFitFrame({
 
       const newScale = Math.min(
         availableWidth / baseWidth,
-        availableHeight / baseHeight,
-        1
+        availableHeight / baseHeight
       );
-      setScale(Math.max(0.1, newScale));
+      setScale(Math.max(0.1, Math.min(newScale, 1.25)));
     };
 
     updateScale();

@@ -48,7 +48,7 @@ export default function UniversalUnitFrame({
       <div className="relative flex w-full h-full shrink-0 flex-col overflow-hidden rounded-2xl border border-zinc-900/90 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.35),0_1px_3px_rgba(0,0,0,0.1)]">
 
         {/* ================= ШАПКА ================= */}
-        <div className="shrink-0 bg-white border-b border-dashed border-zinc-300 px-3 py-1.5 flex items-center justify-between gap-2">
+        <div className="shrink-0 bg-white border-b border-dashed border-zinc-300 h-[56px] px-4 flex items-center justify-between gap-2">
 
           {/* Левый блок: название предмета и модуль / робот */}
           <div className="flex items-center gap-2 min-w-0">
@@ -127,12 +127,12 @@ export default function UniversalUnitFrame({
         </div>
 
         {/* ================= ЦЕНТРАЛЬНАЯ ОБЛАСТЬ (ХОЛСТ) ================= */}
-        <div className="relative w-full h-[520px] min-h-[520px] max-h-[520px] bg-white overflow-hidden shrink-0">
+        <div className="relative w-full h-[540px] min-h-[540px] max-h-[540px] bg-white overflow-hidden shrink-0">
           {children}
         </div>
 
         {/* ================= ПОДВАЛ ================= */}
-        <div className="shrink-0 bg-white border-t border-dashed border-zinc-300 px-3 py-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-auto">
+        <div className="shrink-0 bg-white border-t border-dashed border-zinc-300 h-[64px] px-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-auto">
 
           {/* Слева: звёздочки (учебный) или статус */}
           <div className="flex items-center gap-2 justify-self-start">

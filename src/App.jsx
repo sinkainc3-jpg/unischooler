@@ -381,7 +381,7 @@ export default function App() {
         >
           <div
             ref={containerRef}
-            className="relative w-full h-[520px] min-h-[520px] max-h-[520px] bg-white overflow-hidden shrink-0"
+            className="relative w-full h-[540px] min-h-[540px] max-h-[540px] bg-white overflow-hidden shrink-0"
           >
             <div
               className="absolute inset-0 w-full h-full overflow-hidden"
