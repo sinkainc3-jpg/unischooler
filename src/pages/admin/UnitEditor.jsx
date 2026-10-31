@@ -40,9 +40,37 @@ const ScaledFrame = ({ unitType, children }) => (
   </div>
 );
 
-export default function UnitEditor({ onBack }) {
-  const [unit, setUnit] = useState(DEFAULT_UNIT);
-  const [imageUrl, setImageUrl] = useState(null);
+// Преобразует юнит из формата Supabase в формат редактора
+function unitFromDbToEditor(dbUnit) {
+  return {
+    id: dbUnit.id || '',
+    subject: dbUnit.subject || 'math',
+    type: dbUnit.type || 'learn',
+    difficulty: dbUnit.difficulty || 3,
+    starsCount: dbUnit.starsCount || dbUnit.difficulty || 3,
+    moduleName: dbUnit.module_name || dbUnit.moduleName || 'Модуль',
+    unitCode: dbUnit.unit_code || dbUnit.unitCode || '',
+    title: dbUnit.title || '',
+    image: dbUnit.image_path || dbUnit.image || '',
+    imagePath: dbUnit.image_path || dbUnit.image || '',
+    hint: dbUnit.hint || '',
+    elements: Array.isArray(dbUnit.elements) ? dbUnit.elements : [],
+  };
+}
+
+export default function UnitEditor({ onBack, initialUnit }) {
+  const [unit, setUnit] = useState(() => {
+    if (initialUnit) return unitFromDbToEditor(initialUnit);
+    return DEFAULT_UNIT;
+  });
+  const [editingUnitId, setEditingUnitId] = useState(initialUnit?.id || null);
+  const [imageUrl, setImageUrl] = useState(() => {
+    if (initialUnit) {
+      const img = initialUnit.image_path || initialUnit.image || '';
+      return img && !img.startsWith('blob:') ? img : null;
+    }
+    return null;
+  });
   const [imageDimensions, _setImageDimensions] = useState({ width: 0, height: 0 });
   const [selectedElementId, setSelectedElementId] = useState(null);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -54,6 +82,17 @@ export default function UnitEditor({ onBack }) {
   const canvasRef = useRef(null);
 
   const generateId = useCallback(() => `unit-${Date.now()}`, []);
+
+  const handleResetToNew = useCallback(() => {
+    setUnit(DEFAULT_UNIT);
+    setEditingUnitId(null);
+    setImageUrl(null);
+    setSelectedElementId(null);
+    setIsPreviewMode(false);
+    setUserAnswers({});
+    setChecked(false);
+    setSaveStatus(null);
+  }, []);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -386,11 +425,13 @@ export default function UnitEditor({ onBack }) {
         }),
       }));
 
+      const unitId = editingUnitId || unit.id || `unit-${Date.now()}`;
+
       const unitToSave = {
-        id: unit.id || `unit-${Date.now()}`,
-      subject: unit.subject || 'math',
-      difficulty: unit.difficulty || 3,
-      starsCount: unit.starsCount || unit.difficulty || 3,
+        id: unitId,
+        subject: unit.subject || 'math',
+        difficulty: unit.difficulty || 3,
+        starsCount: unit.starsCount || unit.difficulty || 3,
         module_name: unit.moduleName || 'Модуль',
         unit_code: unit.unitCode || unit.id || '',
         type: unit.type || 'learn',
@@ -407,14 +448,18 @@ export default function UnitEditor({ onBack }) {
 
       if (dbError) throw new Error('Ошибка сохранения в БД: ' + dbError.message);
 
+      const isEditing = !!editingUnitId;
+
       setSaveStatus({
         type: 'success',
-        message: 'Юнит успешно сохранен!',
+        message: isEditing
+          ? 'Юнит успешно обновлён!'
+          : 'Юнит успешно сохранён!',
       });
 
-      // Сбрасываем форму или можно оставить как есть
-      setUnit(DEFAULT_UNIT);
-      setImageUrl(null);
+      // Обновляем id в стейте, чтобы повторное сохранение делало upsert
+      setEditingUnitId(unitId);
+      setUnit((prev) => ({ ...prev, id: unitId }));
     } catch (err) {
       console.error('Save error:', err);
       setSaveStatus({
@@ -422,7 +467,7 @@ export default function UnitEditor({ onBack }) {
         message: 'Ошибка сохранения: ' + err.message,
       });
     }
-  }, [unit]);
+  }, [unit, editingUnitId]);
 
   const selectedElement = unit.elements.find((el) => el.id === selectedElementId);
 
@@ -453,6 +498,11 @@ export default function UnitEditor({ onBack }) {
       <main className={`flex-1 relative overflow-auto h-full w-full bg-slate-950 p-6 flex items-start ${unit?.type === 'learn' ? 'justify-center' : 'justify-start'}`}>
         <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 flex-shrink-0">
           <div className="flex items-center gap-3">
+            {editingUnitId && (
+              <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-600/20 border border-amber-500/40 text-amber-300">
+                ✏️ Редактирование: {unit.title || editingUnitId}
+              </span>
+            )}
             <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
               <button
                 onClick={() => setIsPreviewMode(false)}
@@ -469,14 +519,37 @@ export default function UnitEditor({ onBack }) {
             </div>
           </div>
 
-          {isPreviewMode && (
-            <button
-              onClick={checkAnswers}
-              className="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition"
-            >
-              Проверить ответы
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {editingUnitId && (
+              <button
+                onClick={handleResetToNew}
+                className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition"
+              >
+                ➕ Создать новый
+              </button>
+            )}
+
+            {saveStatus && (
+              <span
+                className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
+                  saveStatus.type === 'success'
+                    ? 'bg-green-600/20 text-green-300 border border-green-500/40'
+                    : 'bg-red-600/20 text-red-300 border border-red-500/40'
+                }`}
+              >
+                {saveStatus.message}
+              </span>
+            )}
+
+            {isPreviewMode && (
+              <button
+                onClick={checkAnswers}
+                className="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition"
+              >
+                Проверить ответы
+              </button>
+            )}
+          </div>
         </header>
 
         <div className="flex-1 relative overflow-auto w-full h-full">

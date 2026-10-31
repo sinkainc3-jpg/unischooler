@@ -73,6 +73,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('unit');
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
   const [openedUnit, setOpenedUnit] = useState(null);
+  const [editingUnit, setEditingUnit] = useState(null);
 
   const activeUnits = openedUnit ? [openedUnit] : unitsData;
   const currentUnit = activeUnits?.[currentUnitIndex] || activeUnits?.[0] || {};
@@ -264,7 +265,14 @@ export default function App() {
 
   if (currentScreen === 'adminEditor') {
     return (
-      <UnitEditor onBack={() => setCurrentScreen('unit')} />
+      <UnitEditor
+        key={editingUnit?.id || 'new'}
+        initialUnit={editingUnit}
+        onBack={() => {
+          setEditingUnit(null);
+          setCurrentScreen('unit');
+        }}
+      />
     );
   }
 
@@ -280,6 +288,10 @@ export default function App() {
           setPraise('');
           setImageNaturalSize({ width: 0, height: 0 });
           setCurrentScreen('unit');
+        }}
+        onEditUnit={(unit) => {
+          setEditingUnit(unit);
+          setCurrentScreen('adminEditor');
         }}
       />
     );
@@ -319,7 +331,10 @@ export default function App() {
           <span>📚</span> Банк юнитов
         </button>
         <button
-          onClick={() => setCurrentScreen('adminEditor')}
+          onClick={() => {
+            setEditingUnit(null);
+            setCurrentScreen('adminEditor');
+          }}
           className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
         >
           <span>✏️</span> Конструктор

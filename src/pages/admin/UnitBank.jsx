@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../../lib/supabase';
 
-export default function UnitBank({ onOpenUnit, onBack }) {
+export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
   const [units, setUnits] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +27,24 @@ export default function UnitBank({ onOpenUnit, onBack }) {
   useEffect(() => {
     loadUnits();
   }, [loadUnits]);
+
+  const handleDelete = useCallback(async (unit) => {
+    if (!window.confirm(`Удалить юнит «${unit.title || unit.id}»?`)) return;
+
+    try {
+      const { error: deleteError } = await supabase
+        .from('units')
+        .delete()
+        .eq('id', unit.id);
+
+      if (deleteError) throw deleteError;
+
+      setUnits((prev) => prev.filter((u) => u.id !== unit.id));
+    } catch (err) {
+      console.error('UnitBank delete error:', err);
+      alert('Ошибка удаления: ' + (err.message || 'Неизвестная ошибка'));
+    }
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-slate-950 text-white p-6">
@@ -96,12 +114,30 @@ export default function UnitBank({ onOpenUnit, onBack }) {
                     </dl>
                   </div>
 
-                  <button
-                    onClick={() => onOpenUnit(unit)}
-                    className="mt-4 w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg transition"
-                  >
-                    Открыть юнит
-                  </button>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      onClick={() => onOpenUnit(unit)}
+                      className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg transition"
+                    >
+                      👁️ Открыть
+                    </button>
+                    {onEditUnit && (
+                      <button
+                        onClick={() => onEditUnit(unit)}
+                        className="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition"
+                        title="Редактировать юнит"
+                      >
+                        ✏️
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDelete(unit)}
+                      className="px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-lg transition"
+                      title="Удалить юнит"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
               );
             })}
