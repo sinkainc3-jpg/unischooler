@@ -272,9 +272,11 @@ export default function App() {
         >
           <div className="relative flex h-full w-full flex-col overflow-hidden">
             {currentUnit.title && (
-              <h1 className="w-full max-w-full shrink-0 break-words px-6 pt-3 text-center text-xl font-bold text-slate-800 md:px-8 md:pt-4 md:text-2xl">
-                {currentUnit.title}
-              </h1>
+              <div className="flex w-full max-w-full shrink-0 items-center justify-center px-6 py-3">
+                <h1 className="max-w-full break-words text-center text-xl font-bold text-slate-800 md:text-2xl select-none">
+                  {currentUnit.title}
+                </h1>
+              </div>
             )}
             <div className="relative min-h-0 w-full flex-1 overflow-hidden">
               {currentUnit.image && (
