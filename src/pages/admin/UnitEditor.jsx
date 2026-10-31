@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import UnitCanvas from '../../components/editor/UnitCanvas';
 import EditorSidebar from '../../components/editor/EditorSidebar';
 import UniversalUnitFrame from '../../components/UniversalUnitFrame';
+import AutoFitFrame from '../../components/AutoFitFrame';
 import { supabase } from '../../lib/supabase';
 
 const SUBJECT_LABELS = {
@@ -609,8 +610,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
           </div>
         </header>
 
-        {/* Чистый скролл-контейнер без схлопывания для холста */}
-        <div className="flex-1 w-full overflow-auto flex justify-center items-start p-6 min-w-0">
+        {/* Контейнер с динамическим авто-вписыванием бланка (Fit to Screen) */}
+        <AutoFitFrame className="flex-1 min-w-0">
           {(() => {
             const frameProps = {
               unitNumber: 1,
@@ -628,43 +629,39 @@ export default function UnitEditor({ onBack, initialUnit }) {
 
             // Рамка рендерится независимо от предмета: subject влияет только на
             // текст в шапке (UniversalUnitFrame), но не на стили и не на холст.
-            // Раньше для не-«math» предметов холст рендерился без белой рамки,
-            // из-за чего на тёмном фоне редактора выглядел чёрным.
             return (
-              <ScaledFrame unitType={unit?.type}>
-                <UniversalUnitFrame
-                  {...frameProps}
-                  score={0}
-                  isAllCorrect={false}
-                  isChecked={false}
-                  onRoadmapClick={() => {}}
-                  onLevelClick={() => {}}
-                  onNumberClick={() => {}}
-                  onDateClick={() => {}}
-                  onHelpClick={() => {}}
-                  onCheck={checkAnswers}
-                >
-                  <UnitCanvas
-                    ref={canvasRef}
-                    imageUrl={imageUrl}
-                    imageDimensions={imageDimensions}
-                    elements={unit.elements}
-                    selectedElementId={selectedElementId}
-                    isPreviewMode={isPreviewMode}
-                    onElementSelect={setSelectedElementId}
-                    onElementUpdate={updateElement}
-                    unitType={unit.type}
-                    unit={unit}
-                    userAnswers={userAnswers}
-                    onUserAnswer={handleUserAnswer}
-                    checked={checked}
-                    onCheckAnswers={checkAnswers}
-                  />
-                </UniversalUnitFrame>
-              </ScaledFrame>
+              <UniversalUnitFrame
+                {...frameProps}
+                score={0}
+                isAllCorrect={false}
+                isChecked={false}
+                onRoadmapClick={() => {}}
+                onLevelClick={() => {}}
+                onNumberClick={() => {}}
+                onDateClick={() => {}}
+                onHelpClick={() => {}}
+                onCheck={checkAnswers}
+              >
+                <UnitCanvas
+                  ref={canvasRef}
+                  imageUrl={imageUrl}
+                  imageDimensions={imageDimensions}
+                  elements={unit.elements}
+                  selectedElementId={selectedElementId}
+                  isPreviewMode={isPreviewMode}
+                  onElementSelect={setSelectedElementId}
+                  onElementUpdate={updateElement}
+                  unitType={unit.type}
+                  unit={unit}
+                  userAnswers={userAnswers}
+                  onUserAnswer={handleUserAnswer}
+                  checked={checked}
+                  onCheckAnswers={checkAnswers}
+                />
+              </UniversalUnitFrame>
             );
           })()}
-        </div>
+        </AutoFitFrame>
       </main>
 
       {exportJson && (

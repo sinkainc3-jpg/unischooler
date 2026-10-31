@@ -119,8 +119,13 @@ export default function EditorElement({
     if (!overlayRect) return;
 
     if (isImage) {
-      const dx = e.clientX - dragStart.x;
-      const dy = e.clientY - dragStart.y;
+      const domEl = elementRef.current;
+      const currentScale = domEl && domEl.offsetWidth > 0
+        ? (domEl.getBoundingClientRect().width / domEl.offsetWidth)
+        : 1;
+
+      const dx = (e.clientX - dragStart.x) / currentScale;
+      const dy = (e.clientY - dragStart.y) / currentScale;
 
       if (isDragging) {
         const newX = Math.max(0, Math.round(startPos.x + dx));
@@ -235,14 +240,21 @@ export default function EditorElement({
     e.stopPropagation();
     e.preventDefault();
 
+    const domEl = elementRef.current;
+    const currentScale = domEl && domEl.offsetWidth > 0
+      ? (domEl.getBoundingClientRect().width / domEl.offsetWidth)
+      : 1;
+
     const startX = e.clientX;
     const startY = e.clientY;
     const startWidth = el.width || localPosition.width || 300;
     const startHeight = el.height || localPosition.height || 300;
 
     const onMouseMove = (moveEvent) => {
-      const newWidth = Math.max(40, startWidth + (moveEvent.clientX - startX));
-      const newHeight = Math.max(40, startHeight + (moveEvent.clientY - startY));
+      const dx = (moveEvent.clientX - startX) / currentScale;
+      const dy = (moveEvent.clientY - startY) / currentScale;
+      const newWidth = Math.max(40, startWidth + dx);
+      const newHeight = Math.max(40, startHeight + dy);
       const roundedWidth = Math.round(newWidth);
       const roundedHeight = Math.round(newHeight);
 

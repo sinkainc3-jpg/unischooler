@@ -5,6 +5,7 @@ import Calendar from './components/Calendar';
 import UnitEditor from './pages/admin/UnitEditor';
 import UnitBank from './pages/admin/UnitBank';
 import UniversalUnitFrame from './components/UniversalUnitFrame';
+import AutoFitFrame from './components/AutoFitFrame';
 
 const PRAISE_PHRASES = ['Так держать!', 'Хорошая работа!', 'Правильно!'];
 const ENCOURAGE_PHRASES = ['Попробуй еще!', 'У тебя получится!', 'Не расстраивайся!', 'Ты сможешь!'];
@@ -309,7 +310,7 @@ export default function App() {
   // ОСНОВНОЙ ЭКРАН ЮНИТЫ
   return (
     <div
-      className="relative flex h-screen w-screen flex-col items-center justify-start overflow-auto text-white p-6 bg-cover bg-center bg-no-repeat bg-fixed"
+      className="relative flex h-screen w-screen flex-col overflow-hidden text-white bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: "url('/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-radial from-slate-950/30 via-slate-950/70 to-slate-950/95 pointer-events-none -z-0" />
@@ -317,7 +318,7 @@ export default function App() {
       {isChecked && praise && (
         <div
           key={praise}
-          className="absolute top-6 left-1/2 z-20 pointer-events-none animate-[praise-pop_0.45s_ease-out_both]"
+          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 pointer-events-none animate-[praise-pop_0.45s_ease-out_both]"
         >
           <span
             className={`px-6 py-2 rounded-full border font-bold text-lg md:text-xl tracking-wide backdrop-blur-sm whitespace-nowrap ${
@@ -331,29 +332,32 @@ export default function App() {
         </div>
       )}
 
-      {/* Кнопки админки */}
-      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-        <button
-          onClick={() => setCurrentScreen('unitbank')}
-          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
-        >
-          <span>📚</span> Банк юнитов
-        </button>
-        <button
-          onClick={() => {
-            setEditingUnit(null);
-            setCurrentScreen('adminEditor');
-          }}
-          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
-        >
-          <span>✏️</span> Конструктор
-        </button>
-      </div>
+      {/* Верхняя навигационная панель с кнопками */}
+      <header className="h-14 w-full shrink-0 flex items-center justify-between px-6 z-30">
+        <div />
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentScreen('unitbank')}
+            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+          >
+            <span>📚</span> Банк юнитов
+          </button>
+          <button
+            onClick={() => {
+              setEditingUnit(null);
+              setCurrentScreen('adminEditor');
+            }}
+            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+          >
+            <span>✏️</span> Конструктор
+          </button>
+        </div>
+      </header>
 
-      <div className="relative z-10 m-auto flex shrink-0 items-center justify-center py-4">
-
+      {/* Авто-вписывание бланка в экран без скролла (Fit to Screen) */}
+      <AutoFitFrame className="flex-1 min-w-0">
         {/* РАМКА ЮНИТА — ЕДИНЫЙ КВАДРАТНЫЙ ШАБЛОН */}
-           <UniversalUnitFrame
+        <UniversalUnitFrame
              unitNumber={currentUnitIndex + 1}
              unitId={currentUnit.id}
              moduleName={currentUnit.moduleName || currentUnit.module_name || 'Модуль'}
@@ -569,8 +573,9 @@ export default function App() {
             </div>
           </div>
         </UniversalUnitFrame>
+      </AutoFitFrame>
 
-        {isHelpOpen && (
+      {isHelpOpen && (
         <Alien
           unitId={currentUnit.id}
           hint={currentUnit.hint}
@@ -578,8 +583,6 @@ export default function App() {
           onClose={() => setIsHelpOpen(false)}
         />
       )}
-
-      </div>
     </div>
   );
 }
