@@ -42,14 +42,14 @@ const UnitCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[540px] min-h-[540px] max-h-[540px] bg-white overflow-hidden shrink-0"
+      className="relative w-full h-[524px] min-h-[524px] max-h-[524px] bg-white overflow-hidden shrink-0"
       onClick={handleCanvasClick}
       tabIndex={0}
     >
       {/* Рамка canvas в режиме редактора */}
       {!isPreviewMode && (
         <div
-          className="absolute inset-0 border border-dashed border-zinc-300 pointer-events-none"
+          className="absolute inset-0 border border-dashed border-zinc-400 pointer-events-none"
         />
       )}
 

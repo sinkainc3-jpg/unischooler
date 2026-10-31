@@ -48,7 +48,7 @@ export default function UniversalUnitFrame({
       <div className="relative flex w-full h-full shrink-0 flex-col overflow-hidden rounded-2xl border border-zinc-900/90 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.35),0_1px_3px_rgba(0,0,0,0.1)]">
 
         {/* ================= ШАПКА ================= */}
-        <div className="shrink-0 bg-white border-b border-dashed border-zinc-300 h-[56px] px-4 flex items-center justify-between gap-2">
+        <div className="shrink-0 bg-white border-b border-dashed border-zinc-400 h-[56px] px-4 flex items-center justify-between gap-2">
 
           {/* Левый блок: название предмета и модуль / робот */}
           <div className="flex items-center gap-2 min-w-0">
@@ -127,34 +127,34 @@ export default function UniversalUnitFrame({
         </div>
 
         {/* ================= ЦЕНТРАЛЬНАЯ ОБЛАСТЬ (ХОЛСТ) ================= */}
-        <div className="relative w-full h-[540px] min-h-[540px] max-h-[540px] bg-white overflow-hidden shrink-0">
+        <div className="relative w-full h-[524px] min-h-[524px] max-h-[524px] bg-white overflow-hidden shrink-0">
           {children}
         </div>
 
         {/* ================= ПОДВАЛ ================= */}
-        <div className="shrink-0 bg-white border-t border-dashed border-zinc-300 h-[64px] px-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-auto">
+        <div className="shrink-0 bg-white border-t border-dashed border-zinc-400 h-[80px] px-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-auto">
 
           {/* Слева: звёздочки (учебный) или статус */}
           <div className="flex items-center gap-2 justify-self-start">
             {!isTrain ? (
-              <div className="flex items-center gap-1 rounded-lg border border-zinc-300 bg-zinc-50/80 px-2 py-1 shadow-sm" title={`Сложность: ${starsToShow} из 3`}>
+              <div className="flex items-center gap-1.5 rounded-xl border border-zinc-300 bg-zinc-50/90 px-3 py-1.5 shadow-sm" title={`Сложность: ${starsToShow} из 3`}>
                 {Array.from({ length: starsToShow }).map((_, index) => (
                   <svg
                     key={index}
                     viewBox="0 0 24 24"
                     aria-label="Звёздочка"
                     role="img"
-                    className="h-5 w-5 fill-amber-400 stroke-amber-800/80 stroke-[1.5] drop-shadow-sm"
+                    className="h-6 w-6 fill-amber-400 stroke-amber-800/80 stroke-[1.5] drop-shadow-sm"
                   >
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" strokeLinejoin="round" />
                   </svg>
                 ))}
                 <button
                   onClick={onHelpClick}
-                  className="relative shrink-0 group cursor-pointer hover:scale-105 transition-transform ml-1"
+                  className="relative shrink-0 group cursor-pointer hover:scale-105 active:scale-95 transition-transform ml-1.5"
                   title="Нажми, чтобы вызвать помощь"
                 >
-                  <img src={alienUrl} alt="Помощь" className="h-9 w-11 object-contain" />
+                  <img src={alienUrl} alt="Помощь" className="h-11 w-14 object-contain drop-shadow-sm" />
                   <span className="pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-max max-w-[170px] rounded-md bg-zinc-900 border border-zinc-800 px-2.5 py-1 text-[10px] font-medium text-zinc-200 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                     Нажми, чтобы вызвать помощь
                   </span>
@@ -172,41 +172,59 @@ export default function UniversalUnitFrame({
             <button
               onClick={onCheck}
               disabled={!onCheck}
-              className="px-5 py-2 bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-xs rounded-lg shadow-sm border border-zinc-700/60 transition active:scale-[0.98] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-900"
+              className="px-6 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white font-medium text-xs rounded-xl shadow-sm border border-zinc-700/60 transition active:scale-[0.98] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-zinc-900"
             >
               Проверить ответы
             </button>
           </div>
 
           {/* Справа: смайлик + навигация */}
-          <div className="flex items-end gap-2 justify-self-end">
-            <div className="flex flex-col items-center gap-0.5">
-              <div className="w-9 h-9 rounded-full border border-zinc-300 overflow-hidden flex items-center justify-center bg-zinc-50 shadow-inner">
+          <div className="flex items-center gap-2.5 justify-self-end">
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className={`w-12 h-12 rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 shadow-inner ${
+                  isAllCorrect
+                    ? 'border-2 border-emerald-400 bg-emerald-50 shadow-[0_0_16px_rgba(52,211,153,0.5)]'
+                    : isChecked
+                    ? 'border-2 border-rose-400 bg-rose-50 shadow-[0_0_16px_rgba(251,113,133,0.45)]'
+                    : 'border border-zinc-300/80 bg-zinc-100/60'
+                }`}
+              >
                 {isAllCorrect ? (
-                  <img src={happyManUrl} alt="Успех" className="w-full h-full object-cover" />
+                  <img
+                    key="happy"
+                    src={happyManUrl}
+                    alt="Успех"
+                    className="w-full h-full object-cover animate-[smiley-pop_0.5s_cubic-bezier(0.34,1.56,0.64,1)_both]"
+                  />
                 ) : isChecked ? (
-                  <img src={sadManUrl} alt="Попробуй еще" className="w-full h-full object-cover" />
+                  <img
+                    key="sad"
+                    src={sadManUrl}
+                    alt="Попробуй еще"
+                    className="w-full h-full object-cover animate-[smiley-pop_0.5s_cubic-bezier(0.34,1.56,0.64,1)_both]"
+                  />
                 ) : null}
               </div>
-              <span className="text-[9px] font-medium text-zinc-600">У меня получилось!</span>
+              <span className="text-[10px] font-medium text-zinc-600 whitespace-nowrap">У меня получилось!</span>
             </div>
 
-            <div className="flex items-center gap-1 rounded-lg border border-zinc-300 bg-white p-0.5 shadow-sm">
+            <div className="flex items-center gap-1 rounded-xl border border-zinc-300 bg-white p-1 shadow-sm">
               <button
                 onClick={onPrev}
                 disabled={isFirst}
-                className="p-0.5 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-25 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
+                className="p-1 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-25 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
                 title="Предыдущая страница"
               >
-                <img src="/sprites/arrow-left.png" alt="Назад" className="w-7 h-7 object-contain" />
+                <img src="/sprites/arrow-left.png" alt="Назад" className="w-8 h-8 object-contain" />
               </button>
               <button
                 onClick={onNext}
                 disabled={isLast}
-                className="p-0.5 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-25 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
+                className="p-1 transition-all duration-150 hover:scale-105 active:scale-95 disabled:opacity-25 disabled:hover:scale-100 disabled:cursor-not-allowed cursor-pointer"
                 title="Следующая страница"
               >
-                <img src="/sprites/arrow-right.png" alt="Вперед" className="w-7 h-7 object-contain" />
+                <img src="/sprites/arrow-right.png" alt="Вперед" className="w-8 h-8 object-contain" />
               </button>
             </div>
           </div>
