@@ -8,16 +8,21 @@ export default function AutoFitFrame({
   baseWidth = BASE_WIDTH,
   baseHeight = BASE_HEIGHT,
   padding = 16,
+  paddingX,
+  paddingY,
   className = '',
 }) {
   const containerRef = useRef(null);
   const [scale, setScale] = useState(1);
 
+  const padX = paddingX !== undefined ? paddingX : padding;
+  const padY = paddingY !== undefined ? paddingY : padding;
+
   useEffect(() => {
     const updateScale = () => {
       if (!containerRef.current) return;
-      const availableWidth = containerRef.current.clientWidth - padding;
-      const availableHeight = containerRef.current.clientHeight - padding;
+      const availableWidth = containerRef.current.clientWidth - padX;
+      const availableHeight = containerRef.current.clientHeight - padY;
 
       if (availableWidth <= 0 || availableHeight <= 0) return;
 
@@ -41,12 +46,12 @@ export default function AutoFitFrame({
       if (resizeObserver) resizeObserver.disconnect();
       window.removeEventListener('resize', updateScale);
     };
-  }, [baseWidth, baseHeight, padding]);
+  }, [baseWidth, baseHeight, padX, padY]);
 
   return (
     <div
       ref={containerRef}
-      className={`w-full h-full flex-1 flex items-center justify-center overflow-hidden p-2 relative ${className}`}
+      className={`w-full h-full flex items-center justify-center overflow-hidden relative ${className}`}
     >
       <div
         style={{

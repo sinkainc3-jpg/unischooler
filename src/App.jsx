@@ -333,9 +333,9 @@ export default function App() {
       )}
 
       {/* Верхняя навигационная панель с кнопками в стиле macOS Liquid Glass */}
-      <header className="h-14 w-full shrink-0 flex items-center justify-between px-6 z-30">
+      <header className="absolute top-0 left-0 right-0 h-14 w-full flex items-center justify-between px-6 z-30 pointer-events-none">
         <div />
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pointer-events-auto">
           <button
             onClick={() => setCurrentScreen('unitbank')}
             className="px-4 py-2 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-100 hover:text-white text-xs font-medium rounded-xl shadow-lg shadow-black/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
@@ -355,7 +355,7 @@ export default function App() {
       </header>
 
       {/* Авто-вписывание бланка в экран без скролла (Fit to Screen) */}
-      <AutoFitFrame className="flex-1 min-w-0">
+      <AutoFitFrame className="w-full h-full flex-1 min-w-0" paddingX={32} paddingY={48}>
         {/* РАМКА ЮНИТА — ЕДИНЫЙ КВАДРАТНЫЙ ШАБЛОН */}
         <UniversalUnitFrame
              unitNumber={currentUnitIndex + 1}

@@ -553,8 +553,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
         />
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0 h-full bg-zinc-950 overflow-hidden">
-        <header className="h-14 bg-zinc-950/70 backdrop-blur-xl border-b border-white/10 shadow-sm px-6 flex items-center justify-between z-10 shrink-0 w-full">
+      <main className="flex-1 flex flex-col min-w-0 h-full bg-zinc-950 overflow-hidden relative">
+        <header className="absolute top-0 left-0 right-0 h-14 bg-zinc-950/70 backdrop-blur-xl border-b border-white/10 shadow-sm px-6 flex items-center justify-between z-20 shrink-0 w-full">
           <div className="flex items-center gap-3">
             {editingUnitId && (
               <span className="px-3 py-1 rounded-xl text-xs font-medium bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/20 text-zinc-300 shadow-sm">
@@ -611,7 +611,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
         </header>
 
         {/* Контейнер с динамическим авто-вписыванием бланка (Fit to Screen) */}
-        <AutoFitFrame className="flex-1 min-w-0">
+        <AutoFitFrame className="w-full h-full flex-1 min-w-0" paddingX={32} paddingY={136}>
           {(() => {
             const frameProps = {
               unitNumber: 1,
