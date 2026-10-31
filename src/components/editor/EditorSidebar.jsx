@@ -66,6 +66,7 @@ export default function EditorSidebar({
           >
             <option value="math">Математика</option>
             <option value="russian">Русский язык</option>
+            <option value="history">История</option>
           </select>
         </label>
 
@@ -82,6 +83,22 @@ export default function EditorSidebar({
             </select>
           </label>
         )}
+
+        <label className="block">
+          <span className="text-xs text-slate-400 block mb-1">Сложность (Количество звезд)</span>
+          <select
+             value={String(unit.starsCount || unit.difficulty || 3)}
+             onChange={(e) => {
+               const starsCount = Number(e.target.value);
+               onUnitChange({ ...unit, starsCount, difficulty: starsCount });
+             }}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          >
+            <option value="1">1 звезда</option>
+            <option value="2">2 звезды</option>
+            <option value="3">3 звезды</option>
+          </select>
+        </label>
 
         <label className="block">
           <span className="text-xs text-slate-400 block mb-1">ID юнита</span>
@@ -102,6 +119,28 @@ export default function EditorSidebar({
             onChange={(e) => onUnitChange({ ...unit, title: e.target.value })}
             className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             placeholder="Название юнита"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-xs text-slate-400 block mb-1">Название модуля</span>
+          <input
+            type="text"
+            value={unit.moduleName || ''}
+            onChange={(e) => onUnitChange({ ...unit, moduleName: e.target.value })}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="Модуль"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-xs text-slate-400 block mb-1">Кодировка юнита</span>
+          <input
+            type="text"
+            value={unit.unitCode || ''}
+            onChange={(e) => onUnitChange({ ...unit, unitCode: e.target.value })}
+            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="0000-0000-0000"
           />
         </label>
 

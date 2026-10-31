@@ -207,7 +207,7 @@ export default function App() {
   // ОСНОВНОЙ ЭКРАН ЮНИТЫ
   return (
     <div
-      className="relative flex flex-col items-center justify-center min-h-screen text-white p-6 bg-cover bg-center bg-no-repeat bg-fixed overflow-x-hidden"
+      className="relative flex h-screen w-screen flex-col items-center justify-center overflow-hidden text-white p-6 bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: "url('/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-radial from-slate-950/30 via-slate-950/70 to-slate-950/95 pointer-events-none -z-0" />
@@ -245,13 +245,17 @@ export default function App() {
         </button>
       </div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-3xl">
+      <div className="relative z-10 flex max-h-full w-full max-w-3xl flex-col items-center justify-center">
 
         {/* РАМКА ЮНИТА — ЕДИНЫЙ КВАДРАТНЫЙ ШАБЛОН */}
-        <UniversalUnitFrame
-          unitNumber={currentUnitIndex + 1}
+           <UniversalUnitFrame
+             unitNumber={currentUnitIndex + 1}
+             unitId={currentUnit.id}
+             moduleName={currentUnit.moduleName || currentUnit.module_name || 'Модуль'}
+             unitCode={currentUnit.unitCode || currentUnit.unit_code}
           score={score}
           subject={currentUnit.subject || 'Математика'}
+           stars={currentUnit.starsCount || currentUnit.difficulty || 3}
           unitType={currentUnit.type || 'learn'}
           isAllCorrect={isAllCorrect}
           isChecked={isChecked}

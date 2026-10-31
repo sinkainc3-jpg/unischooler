@@ -200,7 +200,7 @@ const UnitCanvas = forwardRef((props, ref) => {
     return (
       <div
         ref={containerRef}
-        className="relative w-full h-full min-h-0 bg-transparent overflow-hidden"
+        className="relative w-full h-full min-h-0 bg-white overflow-hidden"
         onClick={handleCanvasClick}
         tabIndex={0}
       >
@@ -230,7 +230,7 @@ const UnitCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative flex-1 min-h-0 w-full h-full bg-transparent overflow-hidden"
+      className="relative flex-1 min-h-0 w-full h-full bg-white overflow-hidden"
       onClick={handleCanvasClick}
       tabIndex={0}
     >

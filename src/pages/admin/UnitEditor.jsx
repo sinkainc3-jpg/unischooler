@@ -4,10 +4,25 @@ import EditorSidebar from '../../components/editor/EditorSidebar';
 import UniversalUnitFrame from '../../components/UniversalUnitFrame';
 import { supabase } from '../../lib/supabase';
 
+const SUBJECT_LABELS = {
+  math: 'Математика',
+  russian: 'Русский язык',
+  history: 'История',
+};
+
+const getSubjectLabel = (subject) => {
+  if (!subject) return SUBJECT_LABELS.math;
+  return SUBJECT_LABELS[subject] || subject;
+};
+
 const DEFAULT_UNIT = {
   id: '',
   subject: 'math',
   type: 'learn',
+  difficulty: 3,
+  starsCount: 3,
+  moduleName: 'Модуль',
+  unitCode: '',
   title: '',
   image: '',
   imagePath: '',
@@ -175,6 +190,10 @@ export default function UnitEditor({ onBack }) {
     const exportUnit = {
       id: unit.id || generateId(),
       subject: unit.subject || 'math',
+      difficulty: unit.difficulty || 3,
+      starsCount: unit.starsCount || unit.difficulty || 3,
+      moduleName: unit.moduleName || 'Модуль',
+      unitCode: unit.unitCode || unit.id || '0000-0000-0000',
       title: unit.title,
       image: unit.imagePath || unit.image,
       hint: unit.hint,
@@ -270,6 +289,10 @@ export default function UnitEditor({ onBack }) {
         setUnit({
           id: imported.id || '',
           subject: subject,
+          difficulty: imported.difficulty || 3,
+          starsCount: imported.starsCount || imported.difficulty || 3,
+          moduleName: imported.moduleName || imported.module_name || 'Модуль',
+          unitCode: imported.unitCode || imported.unit_code || '',
           type: isRussian ? undefined : (imported.type || 'learn'),
           title: imported.title || '',
           image: imported.image || '',
@@ -365,7 +388,11 @@ export default function UnitEditor({ onBack }) {
 
       const unitToSave = {
         id: unit.id || `unit-${Date.now()}`,
-        subject: unit.subject || 'math',
+      subject: unit.subject || 'math',
+      difficulty: unit.difficulty || 3,
+      starsCount: unit.starsCount || unit.difficulty || 3,
+        module_name: unit.moduleName || 'Модуль',
+        unit_code: unit.unitCode || unit.id || '',
         type: unit.type || 'learn',
         title: unit.title || '',
         hint: unit.hint || '',
@@ -386,16 +413,7 @@ export default function UnitEditor({ onBack }) {
       });
 
       // Сбрасываем форму или можно оставить как есть
-      setUnit({
-        id: '',
-        subject: 'math',
-        type: 'learn',
-        title: '',
-        image: '',
-        imagePath: '',
-        hint: '',
-        elements: [],
-      });
+      setUnit(DEFAULT_UNIT);
       setImageUrl(null);
     } catch (err) {
       console.error('Save error:', err);
@@ -465,7 +483,11 @@ export default function UnitEditor({ onBack }) {
           {(() => {
             const frameProps = {
               unitNumber: 1,
-              subject: unit?.subject && unit.subject !== 'math' ? unit.subject : 'Математика',
+              unitId: unit?.id || '',
+              moduleName: unit?.moduleName,
+              unitCode: unit?.unitCode,
+              subject: getSubjectLabel(unit?.subject),
+              stars: unit?.starsCount || unit?.difficulty || 3,
               unitType: unit?.type || 'learn',
               onPrev: () => {},
               onNext: () => {},
@@ -473,62 +495,42 @@ export default function UnitEditor({ onBack }) {
               isLast: true,
             };
 
-            // Контейнер с масштабированием для рамки (объявлен на уровне модуля,
-            // иначе React пересоздаёт поддерево на каждый рендер и сбрасывает ввод)
-
-            if (unit?.subject === 'math' && (unit?.type === 'learn' || unit?.type === 'train')) {
-              return (
-                <ScaledFrame unitType={unit?.type}>
-                  <UniversalUnitFrame
-                    {...frameProps}
-                    score={0}
-                    isAllCorrect={false}
-                    isChecked={false}
-                    onRoadmapClick={() => {}}
-                    onLevelClick={() => {}}
-                    onNumberClick={() => {}}
-                    onDateClick={() => {}}
-                    onHelpClick={() => {}}
-                    onCheck={checkAnswers}
-                  >
-                    <UnitCanvas
-                      ref={canvasRef}
-                      imageUrl={imageUrl}
-                      imageDimensions={imageDimensions}
-                      elements={unit.elements}
-                      selectedElementId={selectedElementId}
-                      isPreviewMode={isPreviewMode}
-                      onElementSelect={setSelectedElementId}
-                      onElementUpdate={updateElement}
-                      unitType={unit.type}
-                      unit={unit}
-                      userAnswers={userAnswers}
-                      onUserAnswer={handleUserAnswer}
-                      checked={checked}
-                      onCheckAnswers={checkAnswers}
-                    />
-                  </UniversalUnitFrame>
-                </ScaledFrame>
-              );
-            }
-
+            // Рамка рендерится независимо от предмета: subject влияет только на
+            // текст в шапке (UniversalUnitFrame), но не на стили и не на холст.
+            // Раньше для не-«math» предметов холст рендерился без белой рамки,
+            // из-за чего на тёмном фоне редактора выглядел чёрным.
             return (
-              <UnitCanvas
-                ref={canvasRef}
-                imageUrl={imageUrl}
-                imageDimensions={imageDimensions}
-                elements={unit.elements}
-                selectedElementId={selectedElementId}
-                isPreviewMode={isPreviewMode}
-                onElementSelect={setSelectedElementId}
-                onElementUpdate={updateElement}
-                unitType={unit.type}
-                unit={unit}
-                userAnswers={userAnswers}
-                onUserAnswer={handleUserAnswer}
-                checked={checked}
-                onCheckAnswers={checkAnswers}
-              />
+              <ScaledFrame unitType={unit?.type}>
+                <UniversalUnitFrame
+                  {...frameProps}
+                  score={0}
+                  isAllCorrect={false}
+                  isChecked={false}
+                  onRoadmapClick={() => {}}
+                  onLevelClick={() => {}}
+                  onNumberClick={() => {}}
+                  onDateClick={() => {}}
+                  onHelpClick={() => {}}
+                  onCheck={checkAnswers}
+                >
+                  <UnitCanvas
+                    ref={canvasRef}
+                    imageUrl={imageUrl}
+                    imageDimensions={imageDimensions}
+                    elements={unit.elements}
+                    selectedElementId={selectedElementId}
+                    isPreviewMode={isPreviewMode}
+                    onElementSelect={setSelectedElementId}
+                    onElementUpdate={updateElement}
+                    unitType={unit.type}
+                    unit={unit}
+                    userAnswers={userAnswers}
+                    onUserAnswer={handleUserAnswer}
+                    checked={checked}
+                    onCheckAnswers={checkAnswers}
+                  />
+                </UniversalUnitFrame>
+              </ScaledFrame>
             );
           })()}
         </div>
