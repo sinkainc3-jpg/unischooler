@@ -309,7 +309,7 @@ export default function App() {
   // ОСНОВНОЙ ЭКРАН ЮНИТЫ
   return (
     <div
-      className="relative flex h-screen w-screen flex-col items-center justify-center overflow-hidden text-white p-6 bg-cover bg-center bg-no-repeat bg-fixed"
+      className="relative flex h-screen w-screen flex-col items-center justify-start overflow-auto text-white p-6 bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: "url('/bg.jpg')" }}
     >
       <div className="absolute inset-0 bg-radial from-slate-950/30 via-slate-950/70 to-slate-950/95 pointer-events-none -z-0" />
@@ -350,7 +350,7 @@ export default function App() {
         </button>
       </div>
 
-      <div className="relative z-10 flex max-h-full w-full max-w-3xl flex-col items-center justify-center">
+      <div className="relative z-10 m-auto flex shrink-0 items-center justify-center py-4">
 
         {/* РАМКА ЮНИТА — ЕДИНЫЙ КВАДРАТНЫЙ ШАБЛОН */}
            <UniversalUnitFrame

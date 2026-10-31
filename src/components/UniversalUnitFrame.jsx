@@ -43,9 +43,9 @@ export default function UniversalUnitFrame({
   const displayedUnitCode = unitCode || unitId || '0000-0000-0000';
 
   return (
-    <div className="relative flex max-h-full w-full max-w-2xl items-center justify-center select-none text-slate-900">
-      {/* Основной контейнер-каркас: белый лист бумаги */}
-      <div className="relative flex aspect-[1/1.1] max-h-[85vh] w-full flex-col overflow-hidden rounded-2xl border-2 border-slate-800 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.75)]">
+    <div className="relative flex shrink-0 items-center justify-center select-none text-slate-900">
+      {/* Основной контейнер-каркас: белый лист бумаги со строгой фиксированной геометрией */}
+      <div className="relative flex aspect-[1/1.1] w-[680px] shrink-0 flex-col overflow-hidden rounded-2xl border-2 border-slate-800 bg-white shadow-[0_18px_45px_rgba(0,0,0,0.75)]">
 
         {/* ================= ШАПКА ================= */}
         <div className="shrink-0 bg-white border-b-2 border-dashed border-slate-400 px-3 py-2 flex items-center justify-between gap-2">
@@ -127,7 +127,7 @@ export default function UniversalUnitFrame({
         </div>
 
         {/* ================= ЦЕНТРАЛЬНАЯ ОБЛАСТЬ (ХОЛСТ) ================= */}
-        <div className="relative flex-1 bg-white overflow-hidden">
+        <div className="relative flex-1 bg-white overflow-hidden shrink-0">
           {children}
         </div>
 

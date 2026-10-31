@@ -35,7 +35,7 @@ const DEFAULT_UNIT = {
 // создаётся новый тип компонента и React перемонтирует всё поддерево —
 // тогда сбрасываются значения и фокус полей ввода в предпросмотре.
 const ScaledFrame = ({ unitType, children }) => (
-  <div className={`w-full h-auto min-w-fit flex-shrink-0 ${unitType === 'learn' ? 'mx-auto' : ''}`}>
+  <div className="w-[680px] shrink-0 flex flex-col items-center justify-center">
     {children}
   </div>
 );
@@ -529,8 +529,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
   const selectedElement = unit.elements.find((el) => el.id === selectedElementId);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-auto">
-      <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 flex-shrink-0 h-full">
+    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-hidden">
+      <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 shrink-0 h-full overflow-y-auto">
         <EditorSidebar
           unit={unit}
           selectedElement={selectedElement}
@@ -552,8 +552,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
         />
       </aside>
 
-      <main className={`flex-1 relative overflow-auto h-full w-full bg-slate-950 p-6 flex items-start ${unit?.type === 'learn' ? 'justify-center' : 'justify-start'}`}>
-        <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 flex-shrink-0">
+      <main className="flex-1 flex flex-col min-w-0 h-full bg-slate-950 overflow-hidden">
+        <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 shrink-0 w-full">
           <div className="flex items-center gap-3">
             {editingUnitId && (
               <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-600/20 border border-amber-500/40 text-amber-300">
@@ -609,7 +609,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
           </div>
         </header>
 
-        <div className="flex-1 relative overflow-auto w-full h-full">
+        {/* Чистый скролл-контейнер без схлопывания для холста */}
+        <div className="flex-1 w-full overflow-auto flex justify-center items-start p-6 min-w-0">
           {(() => {
             const frameProps = {
               unitNumber: 1,
