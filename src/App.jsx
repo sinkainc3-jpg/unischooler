@@ -380,13 +380,7 @@ export default function App() {
             className="relative w-full h-full min-h-0 bg-white overflow-hidden"
           >
             <div
-              className="absolute"
-              style={{
-                left: imageLayout.x,
-                top: imageLayout.y,
-                width: imageLayout.width,
-                height: imageLayout.height,
-              }}
+              className="absolute inset-0 w-full h-full overflow-hidden"
             >
               {currentUnit.image && (
                 <img

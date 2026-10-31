@@ -34,24 +34,34 @@ export default function EditorSidebar({
       const ext = file.name.split('.').pop();
       const filePath = `units/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('unit-images')
         .upload(filePath, file);
 
-      if (error) throw error;
+      let publicUrl = '';
+      if (!error) {
+        const res = supabase.storage
+          .from('unit-images')
+          .getPublicUrl(filePath);
+        publicUrl = res.data?.publicUrl || '';
+      }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('unit-images')
-        .getPublicUrl(filePath);
+      if (!publicUrl) {
+        publicUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
 
       const newElement = {
         id: `img-${Date.now()}`,
         type: 'image',
         src: publicUrl,
-        x: 60,
-        y: 60,
-        width: 240,
-        height: 240,
+        x: 40,
+        y: 40,
+        width: 300,
+        height: 300,
       };
 
       onUnitChange((prev) => ({
@@ -60,8 +70,25 @@ export default function EditorSidebar({
       }));
       onSelectElement(newElement.id);
     } catch (err) {
-      console.error('Ошибка загрузки картинки в Storage:', err);
-      alert('Ошибка при загрузке картинки: ' + (err.message || err));
+      console.error('Ошибка загрузки картинки:', err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newElement = {
+          id: `img-${Date.now()}`,
+          type: 'image',
+          src: reader.result,
+          x: 40,
+          y: 40,
+          width: 300,
+          height: 300,
+        };
+        onUnitChange((prev) => ({
+          ...prev,
+          elements: [...prev.elements, newElement],
+        }));
+        onSelectElement(newElement.id);
+      };
+      reader.readAsDataURL(file);
     } finally {
       setIsUploadingImage(false);
       e.target.value = '';
@@ -179,41 +206,6 @@ export default function EditorSidebar({
             placeholder="Текст подсказки для ученика..."
           />
         </label>
-      </div>
-
-      <div className="border-t border-slate-800 pt-4 space-y-4">
-        <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">PNG страница</span>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={onImageUpload}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-indigo-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-indigo-500"
-          />
-        </label>
-
-        <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Путь к PNG (для JSON)</span>
-          <input
-            type="text"
-            value={unit.imagePath}
-            onChange={(e) => onUnitChange({ ...unit, imagePath: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs"
-            placeholder="/content/percentages/percent-05.png"
-          />
-          <p className="text-xs text-slate-500 mt-1">Путь, который будет записан в JSON. Файл не загружается.</p>
-        </label>
-
-        {imageUrl && (
-          <div className="relative aspect-video bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
-            <img
-              src={imageUrl}
-              alt="Предпросмотр"
-              className="w-full h-full object-contain"
-            />
-          </div>
-        )}
       </div>
 
       <div className="border-t border-slate-800 pt-4">

@@ -9,8 +9,8 @@ const MIN_ELEMENT_HEIGHT = 4; // %
 const normalizeSize = (width, height, isImg = false) => {
   if (isImg) {
     return {
-      width: Math.max(20, Number(width) || 240),
-      height: Math.max(20, Number(height) || 240),
+      width: Math.max(20, Number(width) || 300),
+      height: Math.max(20, Number(height) || 300),
     };
   }
   return {
@@ -21,7 +21,6 @@ const normalizeSize = (width, height, isImg = false) => {
 
 export default function EditorElement({
   element,
-  imageLayout,
   isSelected,
   isPreviewMode,
   onSelect,
@@ -41,8 +40,8 @@ export default function EditorElement({
   const [localPosition, setLocalPosition] = useState(() => {
     const size = normalizeSize(element.width, element.height, element.type === 'image');
     return {
-      x: element.x ?? (element.type === 'image' ? 60 : 0),
-      y: element.y ?? (element.type === 'image' ? 60 : 0),
+      x: element.x ?? (element.type === 'image' ? 40 : 0),
+      y: element.y ?? (element.type === 'image' ? 40 : 0),
       width: size.width,
       height: size.height,
     };
@@ -61,19 +60,23 @@ export default function EditorElement({
   useEffect(() => {
     const size = normalizeSize(element.width, element.height, isImage);
     setLocalPosition({
-      x: element.x ?? (isImage ? 60 : 0),
-      y: element.y ?? (isImage ? 60 : 0),
+      x: element.x ?? (isImage ? 40 : 0),
+      y: element.y ?? (isImage ? 40 : 0),
       width: size.width,
       height: size.height,
     });
   }, [element.x, element.y, element.width, element.height, isImage]);
 
   useEffect(() => {
-    if (elementRef.current?.parentElement) {
-      const rect = elementRef.current.parentElement.getBoundingClientRect();
-      setOverlayRect(rect);
-    }
-  }, [imageLayout]);
+    const updateRect = () => {
+      if (elementRef.current?.parentElement) {
+        setOverlayRect(elementRef.current.parentElement.getBoundingClientRect());
+      }
+    };
+    updateRect();
+    window.addEventListener('resize', updateRect);
+    return () => window.removeEventListener('resize', updateRect);
+  }, []);
 
   const clampPosition = useCallback((x, y, width, height) => {
     const size = normalizeSize(width, height);
@@ -234,8 +237,8 @@ export default function EditorElement({
 
     const startX = e.clientX;
     const startY = e.clientY;
-    const startWidth = el.width || localPosition.width || 200;
-    const startHeight = el.height || localPosition.height || 200;
+    const startWidth = el.width || localPosition.width || 300;
+    const startHeight = el.height || localPosition.height || 300;
 
     const onMouseMove = (moveEvent) => {
       const newWidth = Math.max(40, startWidth + (moveEvent.clientX - startX));

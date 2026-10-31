@@ -1,7 +1,5 @@
 import React, {
   useRef,
-  useEffect,
-  useState,
   useCallback,
   forwardRef,
   useImperativeHandle,
@@ -10,7 +8,6 @@ import EditorElement from './EditorElement';
 
 const UnitCanvas = forwardRef((props, ref) => {
   const {
-    imageUrl,
     elements = [],
     selectedElementId,
     isPreviewMode,
@@ -24,142 +21,31 @@ const UnitCanvas = forwardRef((props, ref) => {
   } = props;
 
   const containerRef = useRef(null);
-  const imageRef = useRef(null);
-
-  const [containerSize, setContainerSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  const [imageNaturalSize, setImageNaturalSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  const [imageLayout, setImageLayout] = useState({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-  });
 
   useImperativeHandle(ref, () => ({
     getContainer: () => containerRef.current,
   }));
 
-  // ResizeObserver для отслеживания размера canvas
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const updateSize = () => {
-      const rect = containerRef.current.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-
-      console.log('CANVAS SIZE', width, height);
-
-      setContainerSize({ width, height });
-    };
-
-    updateSize();
-
-    const resizeObserver = new ResizeObserver(updateSize);
-    resizeObserver.observe(containerRef.current);
-
-    window.addEventListener('resize', updateSize);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateSize);
-    };
-  }, []);
-
-  // onLoad изображения — получаем naturalWidth/naturalHeight
-  const handleImageLoad = useCallback((e) => {
-    const img = e.currentTarget;
-    const naturalWidth = img.naturalWidth;
-    const naturalHeight = img.naturalHeight;
-
-    console.log('IMAGE LOADED', naturalWidth, naturalHeight);
-
-    if (naturalWidth > 0 && naturalHeight > 0) {
-      setImageNaturalSize({ width: naturalWidth, height: naturalHeight });
-    }
-  }, []);
-
-  // Вычисляем layout после получения natural размеров И размера контейнера
-  useEffect(() => {
-    const { width: cw, height: ch } = containerSize;
-    const { width: nw, height: nh } = imageNaturalSize;
-
-    if (cw <= 0 || ch <= 0) {
-      return;
-    }
-
-    // Пока PNG не загружена (или её нет вовсе), холст занимает всю доступную область.
-    // Иначе слой элементов имел бы нулевой размер: новые элементы выглядели бы
-    // тонкими полосками и их нельзя было бы ни увидеть, ни перетащить.
-    if (!imageUrl || nw <= 0 || nh <= 0) {
-      setImageLayout({ x: 0, y: 0, width: cw, height: ch });
-      return;
-    }
-
-    const scale = Math.min(cw / nw, ch / nh);
-    const displayWidth = nw * scale;
-    const displayHeight = nh * scale;
-    const imageX = (cw - displayWidth) / 2;
-    const imageY = (ch - displayHeight) / 2;
-
-    console.log('IMAGE LAYOUT', imageX, imageY, displayWidth, displayHeight);
-
-    setImageLayout({
-      x: imageX,
-      y: imageY,
-      width: displayWidth,
-      height: displayHeight,
-    });
-  }, [containerSize, imageNaturalSize, imageUrl]);
-
   const handleCanvasClick = useCallback(
     (e) => {
-      if (isPreviewMode || !imageUrl) return;
-
+      if (isPreviewMode) return;
       if (
         e.target === containerRef.current ||
-        e.target === imageRef.current
+        e.target.dataset?.canvasOverlay === 'true'
       ) {
         onElementSelect(null);
       }
     },
-    [isPreviewMode, imageUrl, onElementSelect]
+    [isPreviewMode, onElementSelect]
   );
 
-  // Создаем детей для холста - прозрачный контент, только PNG и элементы
-  const canvasChildren = (
-    <>
-      {/* PNG — в DOM, когда есть imageUrl, иначе пусто (прозрачно) */}
-      {imageUrl ? (
-        <img
-          ref={imageRef}
-          src={imageUrl}
-          alt="Unit page"
-          onLoad={handleImageLoad}
-          draggable={false}
-          className="pointer-events-none select-none"
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            userSelect: 'none',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        />
-      ) : null}
-
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full h-full min-h-0 bg-white overflow-hidden"
+      onClick={handleCanvasClick}
+      tabIndex={0}
+    >
       {/* Рамка canvas в режиме редактора */}
       {!isPreviewMode && (
         <div
@@ -167,20 +53,16 @@ const UnitCanvas = forwardRef((props, ref) => {
         />
       )}
 
-      {/* Overlay элементов — те же размеры, что PNG/область рамки */}
+      {/* Единая свободная рабочая область для всех элементов */}
       <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 10, // Над PNG, под UI рамки
-        }}
+        data-canvas-overlay="true"
+        className="absolute inset-0 z-10"
       >
         {elements && elements.length > 0 ? (
           elements.map((element) => (
             <EditorElement
               key={element.id}
               element={element}
-              imageLayout={imageLayout}
               isSelected={element.id === selectedElementId}
               isPreviewMode={isPreviewMode}
               onSelect={onElementSelect}
@@ -194,72 +76,12 @@ const UnitCanvas = forwardRef((props, ref) => {
           ))
         ) : null}
       </div>
-    </>
-  );
-
-  // В режиме редактора — базовый холст
-  if (!isPreviewMode) {
-    return (
-      <div
-        ref={containerRef}
-        className="relative w-full h-full min-h-0 bg-white overflow-hidden"
-        onClick={handleCanvasClick}
-        tabIndex={0}
-      >
-        <div
-          className="absolute"
-          style={{
-            left: imageLayout.x,
-            top: imageLayout.y,
-            width: imageLayout.width,
-            height: imageLayout.height,
-          }}
-        >
-          {canvasChildren}
-        </div>
-
-        {imageLayout.width > 0 && (
-          <div className="absolute bottom-2 right-2 text-xs text-slate-600 bg-slate-900/50 px-2 py-1 rounded">
-            {Math.round(imageLayout.width)} ×{' '}
-            {Math.round(imageLayout.height)}px
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // В режиме предпросмотра — базовый холст с кнопкой проверки
-  return (
-    <div
-      ref={containerRef}
-      className="relative flex-1 min-h-0 w-full h-full bg-white overflow-hidden"
-      onClick={handleCanvasClick}
-      tabIndex={0}
-    >
-      <div
-        className="absolute"
-        style={{
-          left: imageLayout.x,
-          top: imageLayout.y,
-          width: imageLayout.width,
-          height: imageLayout.height,
-        }}
-      >
-        {canvasChildren}
-      </div>
 
       {isPreviewMode && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none">
           <div className="bg-slate-900/90 backdrop-blur px-4 py-2 rounded-lg border border-slate-700 text-sm text-slate-300">
             Режим предпросмотра — элементы не редактируются
           </div>
-        </div>
-      )}
-
-      {imageLayout.width > 0 && (
-        <div className="absolute bottom-2 right-2 text-xs text-slate-600 bg-slate-900/50 px-2 py-1 rounded">
-          {Math.round(imageLayout.width)} ×{' '}
-          {Math.round(imageLayout.height)}px
         </div>
       )}
     </div>

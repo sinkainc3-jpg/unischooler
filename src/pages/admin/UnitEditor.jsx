@@ -94,17 +94,76 @@ export default function UnitEditor({ onBack, initialUnit }) {
     setSaveStatus(null);
   }, []);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       alert('Пожалуйста, выберите файл изображения');
       return;
     }
-    const url = URL.createObjectURL(file);
-    console.log('IMAGE URL SET:', url);
-    setImageUrl(url);
-    setUnit((prev) => ({ ...prev, image: url, imagePath: file.name }));
+
+    try {
+      const ext = file.name.split('.').pop();
+      const filePath = `units/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+
+      const { error } = await supabase.storage
+        .from('unit-images')
+        .upload(filePath, file);
+
+      let publicUrl = '';
+      if (!error) {
+        const res = supabase.storage
+          .from('unit-images')
+          .getPublicUrl(filePath);
+        publicUrl = res.data?.publicUrl || '';
+      }
+
+      if (!publicUrl) {
+        publicUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const newImageElement = {
+        id: `img-${Date.now()}`,
+        type: 'image',
+        src: publicUrl,
+        x: 40,
+        y: 40,
+        width: 300,
+        height: 300,
+      };
+
+      setUnit((prev) => ({
+        ...prev,
+        elements: [...prev.elements, newImageElement],
+      }));
+      setSelectedElementId(newImageElement.id);
+    } catch (err) {
+      console.error(err);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const newImageElement = {
+          id: `img-${Date.now()}`,
+          type: 'image',
+          src: reader.result,
+          x: 40,
+          y: 40,
+          width: 300,
+          height: 300,
+        };
+        setUnit((prev) => ({
+          ...prev,
+          elements: [...prev.elements, newImageElement],
+        }));
+        setSelectedElementId(newImageElement.id);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      e.target.value = '';
+    }
   };
 
   const addElement = (type) => {
@@ -158,10 +217,10 @@ export default function UnitEditor({ onBack, initialUnit }) {
       newElement = {
         id: `img-${Date.now()}`,
         type: 'image',
-        x: 60,
-        y: 60,
-        width: 240,
-        height: 240,
+        x: 40,
+        y: 40,
+        width: 300,
+        height: 300,
         src: '',
       };
     }
