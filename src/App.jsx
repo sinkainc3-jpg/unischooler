@@ -566,6 +566,7 @@ export default function App() {
                     <img
                       src={img.src}
                       alt="Элемент"
+                      draggable={false}
                       className="w-full h-full object-contain pointer-events-none select-none"
                     />
                   )}

@@ -228,6 +228,42 @@ export default function EditorElement({
     }
   }, [isSelected, isPreviewMode, isEditingText, localPosition, element.id, onUpdate, isImage]);
 
+  const handleResizeStart = (e, el) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = el.width || localPosition.width || 200;
+    const startHeight = el.height || localPosition.height || 200;
+
+    const onMouseMove = (moveEvent) => {
+      const newWidth = Math.max(40, startWidth + (moveEvent.clientX - startX));
+      const newHeight = Math.max(40, startHeight + (moveEvent.clientY - startY));
+      const roundedWidth = Math.round(newWidth);
+      const roundedHeight = Math.round(newHeight);
+
+      setLocalPosition((prev) => ({
+        ...prev,
+        width: roundedWidth,
+        height: roundedHeight,
+      }));
+      onUpdate(el.id, { width: roundedWidth, height: roundedHeight });
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('pointermove', onMouseMove);
+      window.removeEventListener('pointerup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('pointermove', onMouseMove);
+    window.addEventListener('pointerup', onMouseUp);
+  };
+
   // ========== ИНЛАЙН-РЕДАКТИРОВАНИЕ ТЕКСТА ==========
   const startTextEditing = useCallback((e) => {
     if (isPreviewMode) return;
@@ -391,6 +427,8 @@ export default function EditorElement({
             <img
               src={src}
               alt="Элемент-изображение"
+              draggable={false}
+              className="pointer-events-none select-none w-full h-full object-contain"
               style={{
                 width: '100%',
                 height: '100%',
@@ -683,6 +721,8 @@ export default function EditorElement({
             <img
               src={element.src}
               alt="Image element"
+              draggable={false}
+              className="pointer-events-none select-none w-full h-full object-contain"
               style={{
                 width: '100%',
                 height: '100%',
@@ -776,68 +816,82 @@ export default function EditorElement({
             ×
           </div>
 
-          {/* Resize handles - 4 corners */}
-          <div
-            style={{
-              position: 'absolute',
-              top: -HANDLE_SIZE / 2,
-              left: -HANDLE_SIZE / 2,
-              width: HANDLE_SIZE,
-              height: HANDLE_SIZE,
-              background: '#fff',
-              border: '2px solid #6366f1',
-              borderRadius: '50%',
-              cursor: 'nwse-resize',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            }}
-            onPointerDown={(e) => handlePointerDown(e, false, true, 'nw')}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              top: -HANDLE_SIZE / 2,
-              right: -HANDLE_SIZE / 2,
-              width: HANDLE_SIZE,
-              height: HANDLE_SIZE,
-              background: '#fff',
-              border: '2px solid #6366f1',
-              borderRadius: '50%',
-              cursor: 'nesw-resize',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            }}
-            onPointerDown={(e) => handlePointerDown(e, false, true, 'ne')}
-          />
-          <div
-            className="cursor-se-resize"
-            style={{
-              position: 'absolute',
-              bottom: -HANDLE_SIZE / 2,
-              right: -HANDLE_SIZE / 2,
-              width: HANDLE_SIZE,
-              height: HANDLE_SIZE,
-              background: '#fff',
-              border: '2px solid #6366f1',
-              borderRadius: '50%',
-              cursor: 'se-resize',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            }}
-            onPointerDown={(e) => handlePointerDown(e, false, true, 'se')}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              bottom: -HANDLE_SIZE / 2,
-              left: -HANDLE_SIZE / 2,
-              width: HANDLE_SIZE,
-              height: HANDLE_SIZE,
-              background: '#fff',
-              border: '2px solid #6366f1',
-              borderRadius: '50%',
-              cursor: 'nesw-resize',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-            }}
-            onPointerDown={(e) => handlePointerDown(e, false, true, 'sw')}
-          />
+          {/* Resize handles */}
+          {isImage ? (
+            <div
+              onMouseDown={(e) => handleResizeStart(e, element)}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                handleResizeStart(e, element);
+              }}
+              className="absolute -right-1.5 -bottom-1.5 w-3.5 h-3.5 bg-blue-500 border-2 border-white rounded-full cursor-se-resize z-50 shadow-sm"
+            />
+          ) : (
+            <>
+              {/* Resize handles - 4 corners */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: -HANDLE_SIZE / 2,
+                  left: -HANDLE_SIZE / 2,
+                  width: HANDLE_SIZE,
+                  height: HANDLE_SIZE,
+                  background: '#fff',
+                  border: '2px solid #6366f1',
+                  borderRadius: '50%',
+                  cursor: 'nwse-resize',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                }}
+                onPointerDown={(e) => handlePointerDown(e, false, true, 'nw')}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: -HANDLE_SIZE / 2,
+                  right: -HANDLE_SIZE / 2,
+                  width: HANDLE_SIZE,
+                  height: HANDLE_SIZE,
+                  background: '#fff',
+                  border: '2px solid #6366f1',
+                  borderRadius: '50%',
+                  cursor: 'nesw-resize',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                }}
+                onPointerDown={(e) => handlePointerDown(e, false, true, 'ne')}
+              />
+              <div
+                className="cursor-se-resize"
+                style={{
+                  position: 'absolute',
+                  bottom: -HANDLE_SIZE / 2,
+                  right: -HANDLE_SIZE / 2,
+                  width: HANDLE_SIZE,
+                  height: HANDLE_SIZE,
+                  background: '#fff',
+                  border: '2px solid #6366f1',
+                  borderRadius: '50%',
+                  cursor: 'se-resize',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                }}
+                onPointerDown={(e) => handlePointerDown(e, false, true, 'se')}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: -HANDLE_SIZE / 2,
+                  left: -HANDLE_SIZE / 2,
+                  width: HANDLE_SIZE,
+                  height: HANDLE_SIZE,
+                  background: '#fff',
+                  border: '2px solid #6366f1',
+                  borderRadius: '50%',
+                  cursor: 'nesw-resize',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                }}
+                onPointerDown={(e) => handlePointerDown(e, false, true, 'sw')}
+              />
+            </>
+          )}
         </>
       )}
     </div>

@@ -145,6 +145,7 @@ const UnitCanvas = forwardRef((props, ref) => {
           alt="Unit page"
           onLoad={handleImageLoad}
           draggable={false}
+          className="pointer-events-none select-none"
           style={{
             width: '100%',
             height: '100%',
@@ -154,6 +155,7 @@ const UnitCanvas = forwardRef((props, ref) => {
             top: 0,
             left: 0,
             zIndex: 1,
+            pointerEvents: 'none',
           }}
         />
       ) : null}
