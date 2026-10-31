@@ -318,13 +318,13 @@ export default function App() {
       {isChecked && praise && (
         <div
           key={praise}
-          className="absolute top-16 left-1/2 -translate-x-1/2 z-40 pointer-events-none animate-[praise-pop_0.45s_ease-out_both]"
+          className="absolute top-3 left-1/2 z-50 pointer-events-none animate-[praise-pop_0.45s_ease-out_both]"
         >
           <span
-            className={`px-6 py-2 rounded-full border font-bold text-lg md:text-xl tracking-wide backdrop-blur-sm whitespace-nowrap ${
+            className={`px-6 py-2 rounded-full border font-bold text-base md:text-lg tracking-wide backdrop-blur-xl whitespace-nowrap shadow-2xl ${
               isAllCorrect
-                ? 'bg-green-500/15 border-green-400/60 text-green-300 shadow-[0_0_25px_rgba(74,222,128,0.35)]'
-                : 'bg-red-500/15 border-red-400/60 text-red-300 shadow-[0_0_25px_rgba(248,113,113,0.35)]'
+                ? 'bg-zinc-950/95 border-emerald-400/70 text-emerald-200 shadow-[0_4px_24px_rgba(16,185,129,0.35)]'
+                : 'bg-zinc-950/95 border-rose-400/70 text-rose-200 shadow-[0_4px_24px_rgba(244,63,94,0.35)]'
             }`}
           >
             {praise}
