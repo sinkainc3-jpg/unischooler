@@ -338,7 +338,7 @@ export default function App() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentScreen('unitbank')}
-            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+            className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium rounded-lg transition shadow-sm flex items-center gap-1.5 cursor-pointer"
           >
             <span>📚</span> Банк юнитов
           </button>
@@ -347,7 +347,7 @@ export default function App() {
               setEditingUnit(null);
               setCurrentScreen('adminEditor');
             }}
-            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg shadow-lg transition flex items-center gap-2"
+            className="px-3.5 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 border border-white/20 text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer"
           >
             <span>✏️</span> Конструктор
           </button>
@@ -432,11 +432,11 @@ export default function App() {
                 const userVal = userAnswers[answerKey] || '';
                 const isCorrect = userVal.trim().toLowerCase() === field.correctAnswer?.trim().toLowerCase();
 
-                let statusStyle = 'border-indigo-500/60 bg-white/90 text-slate-900 focus:border-indigo-600';
+                let statusStyle = 'border-zinc-300 bg-white text-zinc-900 focus:border-zinc-900';
                 if (isChecked) {
                   statusStyle = isCorrect
-                    ? 'border-green-600 bg-green-100 text-green-950 font-bold'
-                    : 'border-red-600 bg-red-100 text-red-950 font-bold';
+                    ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-semibold'
+                    : 'border-red-600 bg-red-50 text-red-950 font-semibold';
                 }
 
                 return (

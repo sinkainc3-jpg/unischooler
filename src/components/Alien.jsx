@@ -34,15 +34,15 @@ export default function Alien({ unitId, hint, from = 'right', onClose }) {
           fromRight ? 'right-36 md:right-44' : 'left-36 md:left-44'
         } w-max max-w-[16rem] md:max-w-xs pointer-events-auto animate-[alien-bubble-pop_0.45s_ease-out_2.2s_both]`}
       >
-        <div className="relative bg-slate-100 text-slate-900 rounded-3xl px-5 py-3.5 border-2 border-indigo-300 shadow-[0_12px_30px_rgba(0,0,0,0.5)]">
+        <div className="relative bg-white text-zinc-900 rounded-2xl px-4.5 py-3 border border-zinc-200/90 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
           <span
-            className={`absolute top-1/2 -translate-y-1/2 w-[18px] h-[18px] bg-slate-100 border-indigo-300 rotate-45 rounded-[3px] ${
+            className={`absolute top-1/2 -translate-y-1/2 w-[14px] h-[14px] bg-white border-zinc-200/90 rotate-45 rounded-[2px] ${
               fromRight
-                ? '-right-[11px] border-r-2 border-t-2'
-                : '-left-[11px] border-l-2 border-b-2'
+                ? '-right-[8px] border-r border-t'
+                : '-left-[8px] border-l border-b'
             }`}
           />
-          <p className="text-sm md:text-base font-semibold leading-snug">
+          <p className="text-sm font-medium leading-relaxed text-zinc-800">
             {hint || 'Тут будет подсказка...'}
           </p>
         </div>

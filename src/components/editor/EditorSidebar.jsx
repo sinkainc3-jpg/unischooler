@@ -106,29 +106,29 @@ export default function EditorSidebar({
   return (
     <div className="flex flex-col gap-6 h-full overflow-y-auto">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Конструктор юнитов</h1>
-        <span className="px-2 py-1 text-xs bg-indigo-600 rounded">Админ</span>
+        <h1 className="text-lg font-semibold tracking-tight text-zinc-100">Конструктор юнитов</h1>
+        <span className="px-2 py-0.5 text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/80 rounded-md">Админ</span>
       </div>
 
       {onBack && (
         <button
           onClick={onBack}
-          className="px-3 py-1.5 text-sm bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition flex items-center gap-1"
+          className="px-3 py-1.5 text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
           </svg>
           Назад к уроку
         </button>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-3.5">
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Предмет</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Предмет</span>
           <select
             value={subject}
             onChange={handleSubjectChange}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           >
             <option value="math">Математика</option>
             <option value="russian">Русский язык</option>
@@ -137,14 +137,14 @@ export default function EditorSidebar({
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Сложность (Количество звезд)</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Сложность (Количество звезд)</span>
           <select
              value={String(unit.starsCount || unit.difficulty || 3)}
              onChange={(e) => {
                const starsCount = Number(e.target.value);
                onUnitChange({ ...unit, starsCount, difficulty: starsCount });
              }}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           >
             <option value="1">1 звезда</option>
             <option value="2">2 звезды</option>
@@ -153,83 +153,83 @@ export default function EditorSidebar({
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">ID юнита</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">ID юнита</span>
           <input
             type="text"
             value={unit.id}
             onChange={(e) => onUnitChange({ ...unit, id: e.target.value || generateId() })}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
             placeholder={generateId()}
           />
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Название</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Название</span>
           <input
             type="text"
             value={unit.title}
             onChange={(e) => onUnitChange({ ...unit, title: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
             placeholder="Название юнита"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Название модуля</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Название модуля</span>
           <input
             type="text"
             value={unit.moduleName || ''}
             onChange={(e) => onUnitChange({ ...unit, moduleName: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
             placeholder="Модуль"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Кодировка юнита</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Кодировка юнита</span>
           <input
             type="text"
             value={unit.unitCode || ''}
             onChange={(e) => onUnitChange({ ...unit, unitCode: e.target.value })}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
             placeholder="0000-0000-0000"
           />
         </label>
 
         <label className="block">
-          <span className="text-xs text-slate-400 block mb-1">Подсказка (hint)</span>
+          <span className="text-xs font-medium text-zinc-400 block mb-1">Подсказка (hint)</span>
           <textarea
             value={unit.hint}
             onChange={(e) => onUnitChange({ ...unit, hint: e.target.value })}
             rows={2}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 resize-none transition"
             placeholder="Текст подсказки для ученика..."
           />
         </label>
       </div>
 
-      <div className="border-t border-slate-800 pt-4">
+      <div className="border-t border-zinc-800/80 pt-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold">Элементы ({unit.elements.length})</h3>
+          <h3 className="text-sm font-semibold text-zinc-200">Элементы ({unit.elements.length})</h3>
         </div>
-        <div className="flex gap-2 mb-3">
+        <div className="grid grid-cols-2 gap-2 mb-3">
           <button
             onClick={() => onAddElement('input')}
-            className="flex-1 px-3 py-1.5 text-sm bg-indigo-600 hover:bg-indigo-500 rounded-lg font-medium transition"
+            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
-            + Добавить поле ввода
+            <span className="text-zinc-400 font-mono text-[11px]">[I]</span> + Ввод
           </button>
           <button
             onClick={() => onAddElement('text')}
-            className="flex-1 px-3 py-1.5 text-sm bg-green-600 hover:bg-green-500 rounded-lg font-medium transition"
+            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
-            + Добавить текст
+            <span className="text-zinc-400 font-mono text-[11px]">T</span> + Текст
           </button>
           <button
             onClick={() => onAddElement('choice')}
-            className="flex-1 px-3 py-1.5 text-sm bg-purple-600 hover:bg-purple-500 rounded-lg font-medium transition"
+            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
-            + Добавить выбор
+            <span className="text-zinc-400 font-mono text-[11px]">○</span> + Выбор
           </button>
           <input
             ref={imageElementInputRef}
@@ -242,45 +242,40 @@ export default function EditorSidebar({
             type="button"
             onClick={() => imageElementInputRef.current?.click()}
             disabled={isUploadingImage}
-            className="flex-1 px-3 py-1.5 text-sm bg-amber-600 hover:bg-amber-500 disabled:opacity-50 rounded-lg font-medium transition cursor-pointer"
+            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 disabled:opacity-50 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
             title="Загрузить картинку на холст"
           >
-            {isUploadingImage ? 'Загрузка...' : '+ Картинка'}
+            <span className="text-zinc-400 font-mono text-[11px]">🖼</span> {isUploadingImage ? 'Загрузка…' : '+ Картинка'}
           </button>
         </div>
 
         {unit.elements.length === 0 ? (
-          <p className="text-slate-500 text-sm text-center py-4">Элементов пока нет. Нажмите «+ Добавить поле ввода» или «+ Добавить текст»</p>
+          <p className="text-zinc-500 text-xs text-center py-4">Элементов пока нет. Добавьте элементы с помощью кнопок выше.</p>
         ) : (
-          <ul className="space-y-2 max-h-60 overflow-y-auto">
+          <ul className="space-y-1.5 max-h-60 overflow-y-auto pr-0.5">
             {unit.elements.map((element) => (
               <li
                 key={element.id}
                 onClick={() => onSelectElement(element.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition ${
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer transition ${
                   selectedElement?.id === element.id
-                    ? 'bg-indigo-500/20 border border-indigo-500/50'
-                    : 'bg-slate-800/50 hover:bg-slate-800 border border-transparent'
+                    ? 'bg-zinc-800 border border-zinc-600 text-zinc-100 shadow-sm'
+                    : 'bg-zinc-900/60 hover:bg-zinc-800/60 border border-zinc-800/80 text-zinc-300'
                 }`}
               >
-                <span className={`px-1.5 py-0.5 rounded flex items-center justify-center text-[10px] font-bold ${
-                  element.type === 'text' ? 'bg-green-500/30 text-green-400' : 
-                  element.type === 'choice' ? 'bg-purple-500/30 text-purple-400' :
-                  element.type === 'image' ? 'bg-amber-500/30 text-amber-400' :
-                  'bg-indigo-500/30 text-indigo-400'
-                }`}>
+                <span className="px-1.5 py-0.5 rounded border border-zinc-700 bg-zinc-800 text-zinc-300 font-mono text-[10px] font-medium flex items-center justify-center">
                   {element.type === 'text' ? 'T' : element.type === 'choice' ? 'C' : element.type === 'image' ? 'IMG' : 'I'}
                 </span>
-                <span className="flex-1 font-mono text-sm truncate">{element.id}</span>
+                <span className="flex-1 font-mono text-xs truncate">{element.id}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onDuplicateElement(element.id);
                   }}
-                  className="p-1 text-slate-400 hover:text-white opacity-0 group-hover:opacity-100 transition"
+                  className="p-1 text-zinc-500 hover:text-zinc-200 transition cursor-pointer"
                   title="Дублировать"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                   </svg>
@@ -290,10 +285,10 @@ export default function EditorSidebar({
                     e.stopPropagation();
                     onDeleteElement(element.id);
                   }}
-                  className="p-1 text-slate-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition"
+                  className="p-1 text-zinc-500 hover:text-red-400 transition cursor-pointer"
                   title="Удалить"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
@@ -312,45 +307,47 @@ export default function EditorSidebar({
         />
       )}
 
-      <div className="border-t border-slate-800 pt-4 space-y-3">
+      <div className="border-t border-zinc-800/80 pt-4 space-y-2.5">
         <button
           onClick={onExport}
-          className="w-full px-4 py-3 bg-green-600 hover:bg-green-500 rounded-lg font-semibold text-lg transition"
+          className="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 rounded-lg font-medium text-xs transition shadow-sm active:scale-[0.98] cursor-pointer"
         >
           Экспорт JSON
         </button>
 
-        <button
-          onClick={onCopyJson}
-          disabled={!unit.elements.length}
-          className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Копировать JSON
-        </button>
-
-        <label className="w-full">
-          <input
-            type="file"
-            accept=".json"
-            onChange={onImport}
-            className="sr-only"
-            id="import-json"
-          />
+        <div className="grid grid-cols-2 gap-2">
           <button
-            type="button"
-            onClick={() => document.getElementById('import-json').click()}
-            className="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition"
+            onClick={onCopyJson}
+            disabled={!unit.elements.length}
+            className="w-full px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 rounded-lg text-xs font-medium transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
-            Импорт JSON
+            Копировать JSON
           </button>
-        </label>
+
+          <label className="w-full">
+            <input
+              type="file"
+              accept=".json"
+              onChange={onImport}
+              className="sr-only"
+              id="import-json"
+            />
+            <button
+              type="button"
+              onClick={() => document.getElementById('import-json').click()}
+              className="w-full px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 rounded-lg text-xs font-medium transition cursor-pointer"
+            >
+              Импорт JSON
+            </button>
+          </label>
+        </div>
 
         <button
           onClick={onSave}
           disabled={!unit.title}
-          className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-semibold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-2.5 bg-zinc-100 hover:bg-white text-zinc-900 rounded-lg font-semibold text-sm transition shadow-sm border border-white/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
-          Сохранить юнит
+          Сохранить юнит в базу
         </button>
       </div>
     </div>

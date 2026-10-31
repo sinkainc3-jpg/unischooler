@@ -49,7 +49,7 @@ const UnitCanvas = forwardRef((props, ref) => {
       {/* Рамка canvas в режиме редактора */}
       {!isPreviewMode && (
         <div
-          className="absolute inset-0 border-2 border-dashed border-indigo-500/50 pointer-events-none"
+          className="absolute inset-0 border border-dashed border-zinc-300 pointer-events-none"
         />
       )}
 
@@ -79,7 +79,7 @@ const UnitCanvas = forwardRef((props, ref) => {
 
       {isPreviewMode && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none">
-          <div className="bg-slate-900/90 backdrop-blur px-4 py-2 rounded-lg border border-slate-700 text-sm text-slate-300">
+          <div className="bg-zinc-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-md border border-zinc-800 text-xs text-zinc-300 shadow-md font-medium">
             Режим предпросмотра — элементы не редактируются
           </div>
         </div>

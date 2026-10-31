@@ -47,30 +47,30 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   const renderImageSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Заменить изображение</span>
+        <span className="text-xs font-medium text-zinc-400">Заменить изображение</span>
         <input
           type="file"
           accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
           onChange={handleImageFileChange}
           disabled={isUploadingImage}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 file:mr-4 file:py-1 file:px-3 file:border-0 file:bg-amber-600 file:text-white file:rounded file:cursor-pointer hover:file:bg-amber-500 text-xs"
+          className="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 file:mr-3 file:py-1 file:px-2.5 file:border file:border-zinc-700 file:bg-zinc-800 file:text-zinc-200 file:rounded-md file:cursor-pointer hover:file:bg-zinc-700 text-xs transition"
         />
         {isUploadingImage && (
           <span className="text-xs text-amber-400 block mt-1">Загрузка в unit-images...</span>
         )}
       </label>
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Путь к картинке (src)</span>
+        <span className="text-xs font-medium text-zinc-400">Путь к картинке (src)</span>
         <input
           type="text"
           value={element.src || ''}
           onChange={(e) => onUpdate(element.id, { src: e.target.value })}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-xs"
+          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 font-mono text-xs transition"
           placeholder="https://..."
         />
       </label>
       {element.src && (
-        <div className="w-full h-32 bg-slate-900 border border-slate-800 rounded-lg p-2 flex items-center justify-center overflow-hidden">
+        <div className="w-full h-32 bg-zinc-950 border border-zinc-800 rounded-lg p-2 flex items-center justify-center overflow-hidden">
           <img src={element.src} alt="Предпросмотр" className="max-w-full max-h-full object-contain" />
         </div>
       )}
@@ -80,19 +80,19 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   const renderTextSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Текст</span>
+        <span className="text-xs font-medium text-zinc-400">Текст</span>
         <textarea
           value={element.content}
           onChange={(e) => handleChange('content', e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none font-mono text-sm"
+          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 resize-none font-mono text-xs transition"
           placeholder="Введите текст..."
         />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Размер шрифта</span>
+          <span className="text-xs font-medium text-zinc-400">Размер шрифта</span>
           <input
             type="number"
             min="8"
@@ -100,16 +100,16 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             step="1"
             value={element.fontSize}
             onChange={(e) => handleChange('fontSize', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Начертание шрифта</span>
+          <span className="text-xs font-medium text-zinc-400">Начертание шрифта</span>
           <select
             value={element.fontWeight}
             onChange={(e) => handleChange('fontWeight', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           >
             <option value="normal">Обычный</option>
             <option value="bold">Жирный</option>
@@ -118,11 +118,11 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
       </div>
 
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Выравнивание</span>
+        <span className="text-xs font-medium text-zinc-400">Выравнивание</span>
         <select
           value={element.textAlign}
           onChange={(e) => handleChange('textAlign', e.target.value)}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
         >
           <option value="left">По левому краю</option>
           <option value="center">По центру</option>
@@ -131,20 +131,20 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
       </label>
 
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Цвет текста</span>
+        <span className="text-xs font-medium text-zinc-400">Цвет текста</span>
         <div className="flex items-center gap-2">
           <input
             type="color"
-            value={element.textColor || '#ffffff'}
+            value={element.textColor || '#18181b'}
             onChange={(e) => onUpdate(element.id, { textColor: e.target.value })}
-            className="w-10 h-10 rounded border border-slate-700 cursor-pointer"
+            className="w-9 h-9 rounded-md border border-zinc-700 bg-transparent cursor-pointer p-0.5"
           />
           <input
             type="text"
-            value={element.textColor || '#ffffff'}
+            value={element.textColor || '#18181b'}
             onChange={(e) => onUpdate(element.id, { textColor: e.target.value })}
-            className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-sm"
-            placeholder="#ffffff"
+            className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            placeholder="#18181b"
           />
         </div>
       </label>
@@ -154,12 +154,12 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   const renderInputSettings = () => (
     <div className="space-y-3">
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">Правильный ответ</span>
+        <span className="text-xs font-medium text-zinc-400">Правильный ответ</span>
         <input
           type="text"
           value={element.correctAnswer}
           onChange={(e) => handleChange('correctAnswer', e.target.value)}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           placeholder="Правильный ответ"
         />
       </label>
@@ -201,60 +201,60 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
     };
 
     const renderChoiceSizeSettings = () => (
-      <div className="space-y-3 border-t border-slate-800 pt-3">
-        <span className="text-xs text-slate-400 font-medium block mb-2">Размер</span>
+      <div className="space-y-3 border-t border-zinc-800/80 pt-3">
+        <span className="text-xs font-medium text-zinc-400 block mb-2">Размер</span>
         <div className="grid grid-cols-2 gap-3">
-<label className="block space-y-1">
-          <span className="text-xs text-slate-400">Размер текста (px)</span>
-          <input
-            type="number"
-            min="8"
-            max="100"
-            step="1"
-            value={element.fontSize || 18}
-            onChange={(e) => handleChange('fontSize', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </label>
+          <label className="block space-y-1">
+            <span className="text-xs text-zinc-400">Размер текста (px)</span>
+            <input
+              type="number"
+              min="8"
+              max="100"
+              step="1"
+              value={element.fontSize || 18}
+              onChange={(e) => handleChange('fontSize', e.target.value)}
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            />
+          </label>
 
-        <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Размер индикатора (px)</span>
-          <input
-            type="number"
-            min="8"
-            max="60"
-            step="1"
-            value={element.optionSize || 18}
-            onChange={(e) => handleChange('optionSize', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </label>
+          <label className="block space-y-1">
+            <span className="text-xs text-zinc-400">Размер индикатора (px)</span>
+            <input
+              type="number"
+              min="8"
+              max="60"
+              step="1"
+              value={element.optionSize || 18}
+              onChange={(e) => handleChange('optionSize', e.target.value)}
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            />
+          </label>
 
-        <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Отступ до текста (px)</span>
-          <input
-            type="number"
-            min="0"
-            max="50"
-            step="1"
-            value={element.optionGap || 8}
-            onChange={(e) => handleChange('optionGap', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </label>
+          <label className="block space-y-1">
+            <span className="text-xs text-zinc-400">Отступ до текста (px)</span>
+            <input
+              type="number"
+              min="0"
+              max="50"
+              step="1"
+              value={element.optionGap || 8}
+              onChange={(e) => handleChange('optionGap', e.target.value)}
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            />
+          </label>
 
-        <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Расстояние между вариантами (px)</span>
-          <input
-            type="number"
-            min="0"
-            max="50"
-            step="1"
-            value={element.optionSpacing || 8}
-            onChange={(e) => handleChange('optionSpacing', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-        </label>
+          <label className="block space-y-1">
+            <span className="text-xs text-zinc-400">Расстояние между вариантами (px)</span>
+            <input
+              type="number"
+              min="0"
+              max="50"
+              step="1"
+              value={element.optionSpacing || 8}
+              onChange={(e) => handleChange('optionSpacing', e.target.value)}
+              className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            />
+          </label>
         </div>
       </div>
     );
@@ -262,11 +262,11 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
     return (
       <div className="space-y-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Правильный вариант</span>
+          <span className="text-xs font-medium text-zinc-400">Правильный вариант</span>
           <select
             value={element.correctOptionId}
             onChange={(e) => handleCorrectOptionChange(e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           >
             {options.map((opt) => (
               <option key={opt.id} value={opt.id}>
@@ -277,36 +277,36 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Цвет текста вариантов</span>
+          <span className="text-xs font-medium text-zinc-400">Цвет текста вариантов</span>
           <div className="flex items-center gap-2">
             <input
               type="color"
-              value={element.optionTextColor || '#ffffff'}
+              value={element.optionTextColor || '#18181b'}
               onChange={(e) => onUpdate(element.id, { optionTextColor: e.target.value })}
-              className="w-10 h-10 rounded border border-slate-700 cursor-pointer"
+              className="w-9 h-9 rounded-md border border-zinc-700 bg-transparent cursor-pointer p-0.5"
             />
             <input
               type="text"
-              value={element.optionTextColor || '#ffffff'}
+              value={element.optionTextColor || '#18181b'}
               onChange={(e) => onUpdate(element.id, { optionTextColor: e.target.value })}
-              className="flex-1 px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-sm"
-              placeholder="#ffffff"
+              className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+              placeholder="#18181b"
             />
           </div>
         </label>
 
-        <div className="border-t border-slate-800 pt-3">
+        <div className="border-t border-zinc-800/80 pt-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-slate-400 font-medium">Варианты ответа</span>
+            <span className="text-xs font-medium text-zinc-400">Варианты ответа</span>
             <button
               onClick={addOption}
-              className="px-2 py-1 text-xs bg-purple-600 hover:bg-purple-500 rounded text-white"
+              className="px-2 py-1 text-xs bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded text-zinc-200 transition cursor-pointer"
             >
               + Добавить вариант
             </button>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             {options.map((opt) => (
               <div
                 key={opt.id}
@@ -316,22 +316,22 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
                   type="radio"
                   checked={element.correctOptionId === opt.id}
                   onChange={() => handleCorrectOptionChange(opt.id)}
-                  className="w-4 h-4 text-purple-500 border-slate-600 focus:ring-purple-500"
+                  className="w-4 h-4 accent-zinc-200 cursor-pointer"
                 />
                 <input
                   type="text"
                   value={opt.text}
                   onChange={(e) => updateOptionText(opt.id, e.target.value)}
-                  className="flex-1 px-2 py-1 bg-slate-800 border border-slate-700 rounded text-white text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="flex-1 px-2.5 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
                   placeholder="Вариант ответа"
                 />
                 <button
                   onClick={() => removeOption(opt.id)}
                   disabled={options.length <= 2}
-                  className="p-1 text-slate-400 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="p-1 text-zinc-500 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition"
                   title="Удалить"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
@@ -347,32 +347,27 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   };
 
   return (
-    <div className="border-t border-slate-800 pt-4 space-y-3">
+    <div className="border-t border-zinc-800/80 pt-4 space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Настройки элемента</h3>
-        <span className={`px-2 py-0.5 text-xs rounded ${
-          element.type === 'text' ? 'bg-green-500/30 text-green-400' :
-          element.type === 'choice' ? 'bg-purple-500/30 text-purple-400' :
-          element.type === 'image' ? 'bg-amber-500/30 text-amber-400' :
-          'bg-indigo-500/30 text-indigo-400'
-        }`}>
-          {element.type === 'text' ? 'Текст' : element.type === 'choice' ? 'Выбор' : element.type === 'image' ? 'Картинка' : 'Поле ввода'}
+        <h3 className="text-sm font-semibold text-zinc-200">Настройки элемента</h3>
+        <span className="px-2 py-0.5 text-[11px] font-mono font-medium rounded border border-zinc-700 bg-zinc-800 text-zinc-300">
+          {element.type === 'text' ? 'Текст' : element.type === 'choice' ? 'Выбор' : element.type === 'image' ? 'Картинка' : 'Ввод'}
         </span>
       </div>
 
       <label className="block space-y-1">
-        <span className="text-xs text-slate-400">ID элемента</span>
+        <span className="text-xs font-medium text-zinc-400">ID элемента</span>
         <input
           type="text"
           value={element.id}
           onChange={(e) => handleChange('id', e.target.value)}
-          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono text-sm"
+          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
         />
       </label>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">X {element.type === 'image' ? '(px)' : '(%)'}</span>
+          <span className="text-xs font-medium text-zinc-400">X {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
             step={element.type === 'image' ? '1' : '0.1'}
@@ -380,12 +375,12 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.x ?? 0}
             onChange={(e) => handleChange('x', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Y {element.type === 'image' ? '(px)' : '(%)'}</span>
+          <span className="text-xs font-medium text-zinc-400">Y {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
             step={element.type === 'image' ? '1' : '0.1'}
@@ -393,12 +388,12 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.y ?? 0}
             onChange={(e) => handleChange('y', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Ширина {element.type === 'image' ? '(px)' : '(%)'}</span>
+          <span className="text-xs font-medium text-zinc-400">Ширина {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
             step={element.type === 'image' ? '1' : '0.1'}
@@ -406,12 +401,12 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.width ?? 0}
             onChange={(e) => handleChange('width', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-xs text-slate-400">Высота {element.type === 'image' ? '(px)' : '(%)'}</span>
+          <span className="text-xs font-medium text-zinc-400">Высота {element.type === 'image' ? '(px)' : '(%)'}</span>
           <input
             type="number"
             step={element.type === 'image' ? '1' : '0.1'}
@@ -419,19 +414,19 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.height ?? 0}
             onChange={(e) => handleChange('height', e.target.value)}
-            className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
           />
         </label>
       </div>
 
-{element.type === 'text' ? renderTextSettings() :
+      {element.type === 'text' ? renderTextSettings() :
         element.type === 'choice' ? renderChoiceSettings() :
         element.type === 'image' ? renderImageSettings() :
         renderInputSettings()}
 
       <button
         onClick={onDelete}
-        className="w-full px-4 py-2 bg-red-600 hover:bg-red-500 rounded-lg font-medium transition"
+        className="w-full px-4 py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg font-medium text-xs transition active:scale-[0.98] cursor-pointer"
       >
         Удалить элемент
       </button>

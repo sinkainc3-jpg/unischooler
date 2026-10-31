@@ -530,8 +530,8 @@ export default function UnitEditor({ onBack, initialUnit }) {
   const selectedElement = unit.elements.find((el) => el.id === selectedElementId);
 
   return (
-    <div className="h-screen w-screen bg-slate-950 text-white flex overflow-hidden">
-      <aside className="w-80 lg:w-96 bg-slate-900 border-r border-slate-800 p-4 shrink-0 h-full overflow-y-auto">
+    <div className="h-screen w-screen bg-zinc-950 text-zinc-100 flex overflow-hidden">
+      <aside className="w-80 lg:w-96 bg-zinc-950 border-r border-zinc-800/80 p-4 shrink-0 h-full overflow-y-auto">
         <EditorSidebar
           unit={unit}
           selectedElement={selectedElement}
@@ -553,24 +553,24 @@ export default function UnitEditor({ onBack, initialUnit }) {
         />
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0 h-full bg-slate-950 overflow-hidden">
-        <header className="h-14 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 shrink-0 w-full">
+      <main className="flex-1 flex flex-col min-w-0 h-full bg-zinc-950 overflow-hidden">
+        <header className="h-14 bg-zinc-950 border-b border-zinc-800/80 px-6 flex items-center justify-between z-10 shrink-0 w-full">
           <div className="flex items-center gap-3">
             {editingUnitId && (
-              <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-600/20 border border-amber-500/40 text-amber-300">
+              <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-900 border border-zinc-700/80 text-zinc-300">
                 ✏️ Редактирование: {unit.title || editingUnitId}
               </span>
             )}
-            <div className="bg-slate-950 p-1 rounded-xl border border-slate-800 flex items-center gap-1">
+            <div className="bg-zinc-900/90 p-0.5 rounded-lg border border-zinc-800 flex items-center gap-0.5">
               <button
                 onClick={() => setIsPreviewMode(false)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${!isPreviewMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${!isPreviewMode ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700/60' : 'text-zinc-400 hover:text-zinc-200'}`}
               >
                 ✏️ Редактор
               </button>
               <button
                 onClick={() => setIsPreviewMode(true)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${isPreviewMode ? 'bg-indigo-600 text-white shadow' : 'text-slate-400 hover:text-white'}`}
+                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${isPreviewMode ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700/60' : 'text-zinc-400 hover:text-zinc-200'}`}
               >
                 👁️ Предпросмотр
               </button>
@@ -581,7 +581,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
             {editingUnitId && (
               <button
                 onClick={handleResetToNew}
-                className="px-4 py-1.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-lg transition"
+                className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium rounded-lg transition cursor-pointer shadow-sm"
               >
                 ➕ Создать новый
               </button>
@@ -589,10 +589,10 @@ export default function UnitEditor({ onBack, initialUnit }) {
 
             {saveStatus && (
               <span
-                className={`text-xs font-semibold px-2.5 py-1 rounded-md ${
+                className={`text-xs font-medium px-2.5 py-1 rounded-md border ${
                   saveStatus.type === 'success'
-                    ? 'bg-green-600/20 text-green-300 border border-green-500/40'
-                    : 'bg-red-600/20 text-red-300 border border-red-500/40'
+                    ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                    : 'bg-red-500/10 text-red-300 border-red-500/30'
                 }`}
               >
                 {saveStatus.message}
@@ -602,7 +602,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
             {isPreviewMode && (
               <button
                 onClick={checkAnswers}
-                className="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-lg transition"
+                className="px-4 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-semibold rounded-lg shadow-sm border border-white/20 transition cursor-pointer"
               >
                 Проверить ответы
               </button>
@@ -665,16 +665,16 @@ export default function UnitEditor({ onBack, initialUnit }) {
       </main>
 
       {exportJson && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setExportJson(null)}>
-          <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setExportJson(null)}>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">Экспорт JSON</h3>
-              <button onClick={() => setExportJson(null)} className="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+              <h3 className="text-lg font-semibold text-zinc-100">Экспорт JSON</h3>
+              <button onClick={() => setExportJson(null)} className="text-zinc-400 hover:text-zinc-200 text-xl leading-none cursor-pointer">&times;</button>
             </div>
-            <pre className="bg-slate-950 border border-slate-800 rounded-lg p-4 text-sm text-slate-300 overflow-auto max-h-[60vh]">{exportJson}</pre>
-            <div className="flex gap-3 mt-4">
-              <button onClick={handleCopyJson} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-medium">Копировать</button>
-              <button onClick={() => setExportJson(null)} className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium">Закрыть</button>
+            <pre className="bg-zinc-950 border border-zinc-800/80 rounded-lg p-4 text-xs font-mono text-zinc-300 overflow-auto max-h-[60vh]">{exportJson}</pre>
+            <div className="flex gap-2.5 mt-4">
+              <button onClick={handleCopyJson} className="px-4 py-2 bg-zinc-100 hover:bg-white text-zinc-900 rounded-lg text-xs font-semibold shadow-sm transition cursor-pointer">Копировать</button>
+              <button onClick={() => setExportJson(null)} className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg text-xs font-medium transition cursor-pointer">Закрыть</button>
             </div>
           </div>
         </div>

@@ -47,21 +47,21 @@ export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
   }, []);
 
   return (
-    <div className="min-h-screen w-full bg-slate-950 text-white p-6">
+    <div className="min-h-screen w-full bg-zinc-950 text-zinc-100 p-6">
       <div className="max-w-5xl mx-auto">
         <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold">📚 Банк юнитов</h1>
-          <div className="flex gap-3">
+          <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-100">📚 Банк юнитов</h1>
+          <div className="flex gap-2.5">
             <button
               onClick={loadUnits}
               disabled={isLoading}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-medium text-zinc-200 rounded-lg transition shadow-sm cursor-pointer"
             >
               {isLoading ? 'Загрузка…' : '🔄 Обновить список'}
             </button>
             <button
               onClick={onBack}
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-sm font-semibold rounded-lg transition"
+              className="px-3.5 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white rounded-lg transition shadow-sm cursor-pointer"
             >
               ← Назад
             </button>
@@ -69,15 +69,15 @@ export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
         </header>
 
         {error && (
-          <div className="mb-6 px-4 py-3 rounded-lg border border-red-500/60 bg-red-500/10 text-red-300 text-sm">
+          <div className="mb-6 px-4 py-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 text-xs">
             Ошибка загрузки: {error}
           </div>
         )}
 
         {isLoading && units.length === 0 ? (
-          <p className="text-slate-400">Загружаем юниты из базы…</p>
+          <p className="text-zinc-500 text-sm">Загружаем юниты из базы…</p>
         ) : units.length === 0 ? (
-          <p className="text-slate-400">В базе пока нет юнитов.</p>
+          <p className="text-zinc-500 text-sm">В базе пока нет юнитов.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {units.map((unit) => {
@@ -85,31 +85,31 @@ export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
               return (
                 <div
                   key={unit.id}
-                  className="flex flex-col bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl hover:border-indigo-500/40 transition"
+                  className="flex flex-col bg-zinc-900/60 border border-zinc-800/80 hover:border-zinc-700 rounded-xl p-4.5 shadow-sm transition"
                 >
                   <div className="flex-1">
                     <div className="flex items-start justify-between gap-2 mb-2">
-                      <h2 className="font-bold text-lg leading-snug break-words">
+                      <h2 className="font-semibold text-base leading-snug break-words text-zinc-100">
                         {unit.title || 'Без названия'}
                       </h2>
                       {unit.type && (
-                        <span className="shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold bg-slate-800 text-slate-300">
+                        <span className="shrink-0 px-2 py-0.5 rounded-md text-[11px] font-medium border border-zinc-700/80 bg-zinc-800 text-zinc-300">
                           {unit.type}
                         </span>
                       )}
                     </div>
-                    <dl className="text-sm text-slate-400 space-y-1">
+                    <dl className="text-xs text-zinc-400 space-y-1">
                       <div className="flex gap-2">
-                        <dt className="text-slate-500">ID:</dt>
-                        <dd className="text-slate-300 break-all">{unit.id}</dd>
+                        <dt className="text-zinc-500">ID:</dt>
+                        <dd className="text-zinc-300 font-mono break-all">{unit.id}</dd>
                       </div>
                       <div className="flex gap-2">
-                        <dt className="text-slate-500">Предмет:</dt>
-                        <dd className="text-slate-300">{unit.subject || '—'}</dd>
+                        <dt className="text-zinc-500">Предмет:</dt>
+                        <dd className="text-zinc-300">{unit.subject || '—'}</dd>
                       </div>
                       <div className="flex gap-2">
-                        <dt className="text-slate-500">Элементов:</dt>
-                        <dd className="text-slate-300">{elementCount}</dd>
+                        <dt className="text-zinc-500">Элементов:</dt>
+                        <dd className="text-zinc-300 font-mono">{elementCount}</dd>
                       </div>
                     </dl>
                   </div>
@@ -117,14 +117,14 @@ export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
                   <div className="mt-4 flex gap-2">
                     <button
                       onClick={() => onOpenUnit(unit)}
-                      className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg transition"
+                      className="flex-1 px-3 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-semibold rounded-lg shadow-sm border border-white/20 transition cursor-pointer"
                     >
                       👁️ Открыть
                     </button>
                     {onEditUnit && (
                       <button
                         onClick={() => onEditUnit(unit)}
-                        className="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm font-semibold rounded-lg transition"
+                        className="px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/80 text-zinc-200 text-xs font-medium rounded-lg transition cursor-pointer"
                         title="Редактировать юнит"
                       >
                         ✏️
@@ -132,7 +132,7 @@ export default function UnitBank({ onOpenUnit, onEditUnit, onBack }) {
                     )}
                     <button
                       onClick={() => handleDelete(unit)}
-                      className="px-3 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-semibold rounded-lg transition"
+                      className="px-3 py-1.5 bg-zinc-900 hover:bg-red-950/40 border border-zinc-700/80 hover:border-red-800/60 text-zinc-400 hover:text-red-300 text-xs font-medium rounded-lg transition cursor-pointer"
                       title="Удалить юнит"
                     >
                       🗑️

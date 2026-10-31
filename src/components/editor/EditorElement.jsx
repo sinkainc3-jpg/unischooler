@@ -517,8 +517,8 @@ export default function EditorElement({
                 ? '#22c55e'
                 : previewInputValue
                   ? '#ef4444'
-                  : '#6366f1')
-              : '#6366f1',
+                  : '#d4d4d8')
+              : '#d4d4d8',
             borderRadius: '4px',
             fontSize: '14px',
             outline: 'none',
@@ -556,21 +556,22 @@ export default function EditorElement({
         style={{
           position: 'absolute',
           inset: 0,
-          border: isSelected ? '2px solid #6366f1' : (isText ? '2px solid #22c55e' : isChoice ? '2px solid #a855f7' : isImage ? '2px solid #f59e0b' : '2px solid #6366f1'),
+          border: isSelected ? '1.5px solid #2563eb' : '1px dashed rgba(161, 161, 170, 0.7)',
           borderRadius: '4px',
-          background: isSelected ? 'rgba(99, 102, 241, 0.15)' : (isText ? 'rgba(34, 197, 94, 0.1)' : isChoice ? 'rgba(168, 85, 247, 0.1)' : isImage ? 'rgba(245, 158, 11, 0.1)' : 'rgba(99, 102, 241, 0.1)'),
-          boxShadow: isSelected ? '0 0 0 2px rgba(99, 102, 241, 0.3)' : 'none',
+          background: isSelected ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+          boxShadow: isSelected ? '0 0 0 1px rgba(37, 99, 235, 0.35)' : 'none',
           pointerEvents: 'none',
         }}
       >
         {unitType === 'train' && !isText && element.correctAnswer && (
           <div style={{
             position: 'absolute',
-            top: '-1.2em',
+            top: '-1.3em',
             left: 0,
             fontSize: '10px',
-            fontWeight: 'bold',
-            color: '#6366f1',
+            fontFamily: 'monospace',
+            fontWeight: '600',
+            color: '#16a34a',
             whiteSpace: 'nowrap',
           }}>
             ✓ {element.correctAnswer}
@@ -579,11 +580,12 @@ export default function EditorElement({
         {unitType === 'train' && isChoice && element.correctOptionId && (
           <div style={{
             position: 'absolute',
-            top: '-1.2em',
+            top: '-1.3em',
             left: 0,
             fontSize: '10px',
-            fontWeight: 'bold',
-            color: '#a855f7',
+            fontFamily: 'monospace',
+            fontWeight: '600',
+            color: '#16a34a',
             whiteSpace: 'nowrap',
           }}>
             ✓ {element.options?.find(o => o.id === element.correctOptionId)?.text || element.correctOptionId}
@@ -620,8 +622,8 @@ export default function EditorElement({
               height: '100%',
               boxSizing: 'border-box',
               padding: '2px 4px',
-              background: 'rgba(255, 255, 255, 0.97)',
-              border: '2px solid #6366f1',
+              background: 'rgba(255, 255, 255, 0.98)',
+              border: '1.5px solid #2563eb',
               borderRadius: '4px',
               outline: 'none',
               fontSize: `${element.fontSize || 18}px`,
@@ -684,18 +686,18 @@ export default function EditorElement({
                 display: 'flex',
                 alignItems: 'center',
                 gap: `${(element.optionGap || 8)}px`,
-                padding: '6px 8px',
-                background: 'rgba(168, 85, 247, 0.2)',
-                border: '1px solid rgba(168, 85, 247, 0.4)',
+                padding: '5px 8px',
+                background: '#fafafa',
+                border: '1px solid #e4e4e7',
                 borderRadius: '4px',
                 fontSize: `${(element.fontSize || 18)}px`,
-                color: element.optionTextColor || '#ffffff',
+                color: element.optionTextColor || '#18181b',
               }}
             >
               <div style={{
                 width: `${(element.optionSize || 18)}px`,
                 height: `${(element.optionSize || 18)}px`,
-                border: '2px solid #a855f7',
+                border: '1.5px solid #a1a1aa',
                 borderRadius: '50%',
                 flexShrink: 0,
               }} />
@@ -703,7 +705,7 @@ export default function EditorElement({
                 {opt.text}
               </span>
               {opt.id === element.correctOptionId && (
-                <span style={{ color: '#a855f7', fontWeight: 'bold', fontSize: '10px' }}>✓</span>
+                <span style={{ color: '#16a34a', fontWeight: 'bold', fontSize: '11px' }}>✓</span>
               )}
             </div>
           ))}
@@ -776,9 +778,9 @@ export default function EditorElement({
             inset: 0,
             boxSizing: 'border-box',
             padding: '2px 6px',
-            background: 'rgba(255,255,255,0.9)',
-            color: '#1e293b',
-            border: '1px solid #6366f1',
+            background: 'rgba(255,255,255,0.95)',
+            color: '#18181b',
+            border: '1px solid #d4d4d8',
             borderRadius: '4px',
             fontSize: '14px',
             outline: 'none',
@@ -800,12 +802,14 @@ export default function EditorElement({
               left: 0,
               fontSize: '10px',
               fontFamily: 'monospace',
-              color: '#94a3b8',
-              background: '#0f172a',
-              padding: '1px 4px',
+              color: '#d4d4d8',
+              background: '#18181b',
+              border: '1px solid #27272a',
+              padding: '1px 6px',
               borderRadius: '3px',
               whiteSpace: 'nowrap',
               pointerEvents: 'none',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
             }}
           >
             {isImage
@@ -821,14 +825,17 @@ export default function EditorElement({
               right: 0,
               width: '18px',
               height: '18px',
-              background: '#ef4444',
-              borderRadius: '50%',
+              background: '#18181b',
+              border: '1px solid #3f3f46',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff',
-              fontSize: '12px',
+              color: '#f87171',
+              fontSize: '13px',
+              lineHeight: 1,
               cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
             }}
             onPointerDown={() => onUpdate(element.id, { _delete: true })}
             title="Удалить"
@@ -844,7 +851,7 @@ export default function EditorElement({
                 e.stopPropagation();
                 handleResizeStart(e, element);
               }}
-              className="absolute -right-1.5 -bottom-1.5 w-3.5 h-3.5 bg-blue-500 border-2 border-white rounded-full cursor-se-resize z-50 shadow-sm"
+              className="absolute -right-1.5 -bottom-1.5 w-3.5 h-3.5 bg-white border-2 border-blue-600 rounded-sm cursor-se-resize z-50 shadow-sm"
             />
           ) : (
             <>
@@ -857,10 +864,10 @@ export default function EditorElement({
                   width: HANDLE_SIZE,
                   height: HANDLE_SIZE,
                   background: '#fff',
-                  border: '2px solid #6366f1',
-                  borderRadius: '50%',
+                  border: '1.5px solid #2563eb',
+                  borderRadius: '2px',
                   cursor: 'nwse-resize',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                 }}
                 onPointerDown={(e) => handlePointerDown(e, false, true, 'nw')}
               />
@@ -872,10 +879,10 @@ export default function EditorElement({
                   width: HANDLE_SIZE,
                   height: HANDLE_SIZE,
                   background: '#fff',
-                  border: '2px solid #6366f1',
-                  borderRadius: '50%',
+                  border: '1.5px solid #2563eb',
+                  borderRadius: '2px',
                   cursor: 'nesw-resize',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                 }}
                 onPointerDown={(e) => handlePointerDown(e, false, true, 'ne')}
               />
@@ -888,10 +895,10 @@ export default function EditorElement({
                   width: HANDLE_SIZE,
                   height: HANDLE_SIZE,
                   background: '#fff',
-                  border: '2px solid #6366f1',
-                  borderRadius: '50%',
+                  border: '1.5px solid #2563eb',
+                  borderRadius: '2px',
                   cursor: 'se-resize',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                 }}
                 onPointerDown={(e) => handlePointerDown(e, false, true, 'se')}
               />
@@ -903,10 +910,10 @@ export default function EditorElement({
                   width: HANDLE_SIZE,
                   height: HANDLE_SIZE,
                   background: '#fff',
-                  border: '2px solid #6366f1',
-                  borderRadius: '50%',
+                  border: '1.5px solid #2563eb',
+                  borderRadius: '2px',
                   cursor: 'nesw-resize',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
                 }}
                 onPointerDown={(e) => handlePointerDown(e, false, true, 'sw')}
               />

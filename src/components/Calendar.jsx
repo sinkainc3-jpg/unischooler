@@ -38,23 +38,23 @@ export default function Calendar({ completedDays = [] }) {
     a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
   return (
-    <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl select-none">
+    <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl select-none">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => shiftMonth(-1)}
-          className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-indigo-600 text-white font-bold transition active:scale-90 cursor-pointer"
+          className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer flex items-center justify-center font-medium"
           title="Предыдущий месяц"
         >
           ←
         </button>
 
         <div className="text-center">
-          <p className="font-bold text-lg leading-tight">
+          <p className="font-semibold text-base leading-tight text-zinc-100">
             {MONTHS[view.month]} {view.year}
           </p>
           <button
             onClick={() => setView({ year: now.getFullYear(), month: now.getMonth() })}
-            className="text-xs text-indigo-400 hover:text-indigo-300 transition cursor-pointer"
+            className="text-xs text-zinc-400 hover:text-zinc-200 transition cursor-pointer"
           >
             Сегодня
           </button>
@@ -62,7 +62,7 @@ export default function Calendar({ completedDays = [] }) {
 
         <button
           onClick={() => shiftMonth(1)}
-          className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-indigo-600 text-white font-bold transition active:scale-90 cursor-pointer"
+          className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer flex items-center justify-center font-medium"
           title="Следующий месяц"
         >
           →
@@ -73,7 +73,7 @@ export default function Calendar({ completedDays = [] }) {
         {WEEKDAYS.map((w) => (
           <div
             key={w}
-            className="h-8 flex items-center justify-center text-xs font-bold text-slate-500 uppercase"
+            className="h-8 flex items-center justify-center text-[11px] font-mono font-medium text-zinc-500 uppercase"
           >
             {w}
           </div>
@@ -90,12 +90,12 @@ export default function Calendar({ completedDays = [] }) {
               key={key}
               title={isDone ? 'Задание выполнено' : undefined}
               className={`h-10 flex items-center justify-center rounded-lg text-sm border transition ${
-                inMonth ? 'text-slate-200 border-transparent' : 'text-slate-600 border-transparent'
+                inMonth ? 'text-zinc-200 border-transparent' : 'text-zinc-600 border-transparent'
               } ${
                 isDone
-                  ? 'bg-green-500/15 border-green-400/50'
+                  ? 'bg-emerald-500/10 border-emerald-500/30'
                   : isToday
-                    ? 'ring-2 ring-indigo-500 font-bold'
+                    ? 'ring-1 ring-zinc-400 text-white font-semibold'
                     : ''
               }`}
             >
@@ -104,7 +104,7 @@ export default function Calendar({ completedDays = [] }) {
                   src={alienUrl}
                   alt="Задание выполнено"
                   draggable="false"
-                  className="w-8 h-8 object-contain select-none drop-shadow-[0_0_6px_rgba(74,222,128,0.6)]"
+                  className="w-8 h-8 object-contain select-none"
                 />
               ) : (
                 d.getDate()
@@ -114,7 +114,7 @@ export default function Calendar({ completedDays = [] }) {
         })}
       </div>
 
-      <div className="mt-4 flex items-center gap-2 text-xs text-slate-400">
+      <div className="mt-4 flex items-center gap-2 text-xs text-zinc-400">
         <img src={alienUrl} alt="" draggable="false" className="w-5 h-5 object-contain select-none" />
         день с выполненным заданием
       </div>
