@@ -531,7 +531,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
 
   return (
     <div className="h-screen w-screen bg-zinc-950 text-zinc-100 flex overflow-hidden">
-      <aside className="w-80 lg:w-96 bg-zinc-950 border-r border-zinc-800/80 p-4 shrink-0 h-full overflow-y-auto">
+      <aside className="w-80 lg:w-96 bg-zinc-950/80 backdrop-blur-2xl border-r border-white/10 p-4 shrink-0 h-full overflow-y-auto">
         <EditorSidebar
           unit={unit}
           selectedElement={selectedElement}
@@ -554,34 +554,34 @@ export default function UnitEditor({ onBack, initialUnit }) {
       </aside>
 
       <main className="flex-1 flex flex-col min-w-0 h-full bg-zinc-950 overflow-hidden">
-        <header className="h-14 bg-zinc-950 border-b border-zinc-800/80 px-6 flex items-center justify-between z-10 shrink-0 w-full">
+        <header className="h-14 bg-zinc-950/70 backdrop-blur-xl border-b border-white/10 shadow-sm px-6 flex items-center justify-between z-10 shrink-0 w-full">
           <div className="flex items-center gap-3">
             {editingUnitId && (
-              <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-900 border border-zinc-700/80 text-zinc-300">
+              <span className="px-3 py-1 rounded-xl text-xs font-medium bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/20 text-zinc-300 shadow-sm">
                 ✏️ Редактирование: {unit.title || editingUnitId}
               </span>
             )}
-            <div className="bg-zinc-900/90 p-0.5 rounded-lg border border-zinc-800 flex items-center gap-0.5">
+            <div className="bg-zinc-900/60 backdrop-blur-xl p-1 rounded-xl border border-white/10 border-t-white/20 shadow-inner flex items-center gap-1">
               <button
                 onClick={() => setIsPreviewMode(false)}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${!isPreviewMode ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700/60' : 'text-zinc-400 hover:text-zinc-200'}`}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${!isPreviewMode ? 'bg-zinc-800/90 backdrop-blur-md text-white border border-white/15 border-t-white/25 shadow-md shadow-black/30' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
               >
                 ✏️ Редактор
               </button>
               <button
                 onClick={() => setIsPreviewMode(true)}
-                className={`px-3.5 py-1.5 rounded-md text-xs font-medium transition cursor-pointer ${isPreviewMode ? 'bg-zinc-800 text-zinc-100 shadow-sm border border-zinc-700/60' : 'text-zinc-400 hover:text-zinc-200'}`}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 cursor-pointer ${isPreviewMode ? 'bg-zinc-800/90 backdrop-blur-md text-white border border-white/15 border-t-white/25 shadow-md shadow-black/30' : 'text-zinc-400 hover:text-white hover:bg-white/5'}`}
               >
                 👁️ Предпросмотр
               </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {editingUnitId && (
               <button
                 onClick={handleResetToNew}
-                className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium rounded-lg transition cursor-pointer shadow-sm"
+                className="px-3.5 py-1.5 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 text-zinc-200 hover:text-white text-xs font-medium rounded-xl shadow-lg shadow-black/30 transition-all duration-200 active:scale-[0.98] cursor-pointer"
               >
                 ➕ Создать новый
               </button>
@@ -589,10 +589,10 @@ export default function UnitEditor({ onBack, initialUnit }) {
 
             {saveStatus && (
               <span
-                className={`text-xs font-medium px-2.5 py-1 rounded-md border ${
+                className={`text-xs font-medium px-3 py-1 rounded-xl border backdrop-blur-md shadow-sm ${
                   saveStatus.type === 'success'
-                    ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                    : 'bg-red-500/10 text-red-300 border-red-500/30'
+                    ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 border-t-emerald-400/40'
+                    : 'bg-red-500/10 text-red-300 border-red-500/30 border-t-red-400/40'
                 }`}
               >
                 {saveStatus.message}
@@ -602,7 +602,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
             {isPreviewMode && (
               <button
                 onClick={checkAnswers}
-                className="px-4 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-semibold rounded-lg shadow-sm border border-white/20 transition cursor-pointer"
+                className="px-4 py-1.5 bg-zinc-100/90 hover:bg-white text-zinc-900 border border-white/40 border-t-white shadow-lg shadow-black/20 text-xs font-semibold rounded-xl active:scale-[0.98] transition-all duration-200 cursor-pointer"
               >
                 Проверить ответы
               </button>
@@ -665,16 +665,16 @@ export default function UnitEditor({ onBack, initialUnit }) {
       </main>
 
       {exportJson && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setExportJson(null)}>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-auto shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4" onClick={() => setExportJson(null)}>
+          <div className="bg-zinc-900/80 backdrop-blur-2xl border border-white/10 border-t-white/20 rounded-2xl p-6 max-w-2xl w-full max-h-[80vh] overflow-auto shadow-2xl shadow-black/60" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-zinc-100">Экспорт JSON</h3>
+              <h3 className="text-base font-semibold text-zinc-100">Экспорт JSON</h3>
               <button onClick={() => setExportJson(null)} className="text-zinc-400 hover:text-zinc-200 text-xl leading-none cursor-pointer">&times;</button>
             </div>
-            <pre className="bg-zinc-950 border border-zinc-800/80 rounded-lg p-4 text-xs font-mono text-zinc-300 overflow-auto max-h-[60vh]">{exportJson}</pre>
+            <pre className="bg-zinc-950/80 border border-white/10 rounded-xl p-4 text-xs font-mono text-zinc-300 overflow-auto max-h-[60vh]">{exportJson}</pre>
             <div className="flex gap-2.5 mt-4">
-              <button onClick={handleCopyJson} className="px-4 py-2 bg-zinc-100 hover:bg-white text-zinc-900 rounded-lg text-xs font-semibold shadow-sm transition cursor-pointer">Копировать</button>
-              <button onClick={() => setExportJson(null)} className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg text-xs font-medium transition cursor-pointer">Закрыть</button>
+              <button onClick={handleCopyJson} className="px-4 py-2 bg-white/95 hover:bg-white text-zinc-950 rounded-xl text-xs font-semibold shadow-md border border-white/40 border-t-white active:scale-[0.98] transition-all duration-200 cursor-pointer">Копировать</button>
+              <button onClick={() => setExportJson(null)} className="px-4 py-2 bg-zinc-800/70 hover:bg-zinc-700/80 border border-white/10 border-t-white/20 text-zinc-200 rounded-xl text-xs font-medium shadow-md transition-all duration-200 active:scale-[0.98] cursor-pointer">Закрыть</button>
             </div>
           </div>
         </div>

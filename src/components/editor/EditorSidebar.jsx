@@ -104,16 +104,16 @@ export default function EditorSidebar({
   };
 
   return (
-    <div className="flex flex-col gap-6 h-full overflow-y-auto">
+    <div className="flex flex-col gap-6 h-full overflow-y-auto pr-0.5">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold tracking-tight text-zinc-100">Конструктор юнитов</h1>
-        <span className="px-2 py-0.5 text-[11px] font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/80 rounded-md">Админ</span>
+        <span className="px-2.5 py-0.5 text-[11px] font-medium bg-zinc-900/60 backdrop-blur-md text-zinc-200 border border-white/10 border-t-white/20 rounded-lg shadow-sm">Админ</span>
       </div>
 
       {onBack && (
         <button
           onClick={onBack}
-          className="px-3 py-1.5 text-xs bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-800 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1.5 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 text-zinc-300 hover:text-white border border-white/10 border-t-white/20 hover:border-white/20 rounded-xl font-medium shadow-md shadow-black/20 transition-all duration-200 flex items-center gap-1.5 active:scale-[0.98] cursor-pointer"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -128,7 +128,7 @@ export default function EditorSidebar({
           <select
             value={subject}
             onChange={handleSubjectChange}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           >
             <option value="math">Математика</option>
             <option value="russian">Русский язык</option>
@@ -144,7 +144,7 @@ export default function EditorSidebar({
                const starsCount = Number(e.target.value);
                onUnitChange({ ...unit, starsCount, difficulty: starsCount });
              }}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           >
             <option value="1">1 звезда</option>
             <option value="2">2 звезды</option>
@@ -158,7 +158,7 @@ export default function EditorSidebar({
             type="text"
             value={unit.id}
             onChange={(e) => onUnitChange({ ...unit, id: e.target.value || generateId() })}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
             placeholder={generateId()}
           />
         </label>
@@ -169,7 +169,7 @@ export default function EditorSidebar({
             type="text"
             value={unit.title}
             onChange={(e) => onUnitChange({ ...unit, title: e.target.value })}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
             placeholder="Название юнита"
           />
         </label>
@@ -180,7 +180,7 @@ export default function EditorSidebar({
             type="text"
             value={unit.moduleName || ''}
             onChange={(e) => onUnitChange({ ...unit, moduleName: e.target.value })}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
             placeholder="Модуль"
           />
         </label>
@@ -191,7 +191,7 @@ export default function EditorSidebar({
             type="text"
             value={unit.unitCode || ''}
             onChange={(e) => onUnitChange({ ...unit, unitCode: e.target.value })}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
             placeholder="0000-0000-0000"
           />
         </label>
@@ -202,32 +202,32 @@ export default function EditorSidebar({
             value={unit.hint}
             onChange={(e) => onUnitChange({ ...unit, hint: e.target.value })}
             rows={2}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 resize-none transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:bg-zinc-900/90 focus:outline-none focus:ring-1 focus:ring-white/20 resize-none transition-all duration-200"
             placeholder="Текст подсказки для ученика..."
           />
         </label>
       </div>
 
-      <div className="border-t border-zinc-800/80 pt-4">
+      <div className="border-t border-white/10 pt-4">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold text-zinc-200">Элементы ({unit.elements.length})</h3>
         </div>
         <div className="grid grid-cols-2 gap-2 mb-3">
           <button
             onClick={() => onAddElement('input')}
-            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+            className="px-2.5 py-2 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 border border-white/10 border-t-white/20 hover:border-white/20 text-zinc-200 hover:text-white rounded-xl font-medium shadow-md shadow-black/20 transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span className="text-zinc-400 font-mono text-[11px]">[I]</span> + Ввод
           </button>
           <button
             onClick={() => onAddElement('text')}
-            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+            className="px-2.5 py-2 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 border border-white/10 border-t-white/20 hover:border-white/20 text-zinc-200 hover:text-white rounded-xl font-medium shadow-md shadow-black/20 transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span className="text-zinc-400 font-mono text-[11px]">T</span> + Текст
           </button>
           <button
             onClick={() => onAddElement('choice')}
-            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+            className="px-2.5 py-2 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 border border-white/10 border-t-white/20 hover:border-white/20 text-zinc-200 hover:text-white rounded-xl font-medium shadow-md shadow-black/20 transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
           >
             <span className="text-zinc-400 font-mono text-[11px]">○</span> + Выбор
           </button>
@@ -242,7 +242,7 @@ export default function EditorSidebar({
             type="button"
             onClick={() => imageElementInputRef.current?.click()}
             disabled={isUploadingImage}
-            className="px-2.5 py-2 text-xs bg-zinc-900 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 text-zinc-200 disabled:opacity-50 rounded-lg font-medium transition shadow-sm active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+            className="px-2.5 py-2 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 border border-white/10 border-t-white/20 hover:border-white/20 text-zinc-200 hover:text-white disabled:opacity-40 rounded-xl font-medium shadow-md shadow-black/20 transition-all duration-200 active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
             title="Загрузить картинку на холст"
           >
             <span className="text-zinc-400 font-mono text-[11px]">🖼</span> {isUploadingImage ? 'Загрузка…' : '+ Картинка'}
@@ -257,13 +257,13 @@ export default function EditorSidebar({
               <li
                 key={element.id}
                 onClick={() => onSelectElement(element.id)}
-                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer transition ${
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl cursor-pointer transition-all duration-150 ${
                   selectedElement?.id === element.id
-                    ? 'bg-zinc-800 border border-zinc-600 text-zinc-100 shadow-sm'
-                    : 'bg-zinc-900/60 hover:bg-zinc-800/60 border border-zinc-800/80 text-zinc-300'
+                    ? 'bg-zinc-800/80 backdrop-blur-xl border border-white/20 border-t-white/30 text-white shadow-lg shadow-black/30'
+                    : 'bg-zinc-900/40 backdrop-blur-md hover:bg-zinc-800/50 border border-white/5 hover:border-white/10 text-zinc-300'
                 }`}
               >
-                <span className="px-1.5 py-0.5 rounded border border-zinc-700 bg-zinc-800 text-zinc-300 font-mono text-[10px] font-medium flex items-center justify-center">
+                <span className="px-1.5 py-0.5 rounded-md border border-white/10 bg-zinc-800/80 text-zinc-300 font-mono text-[10px] font-medium flex items-center justify-center">
                   {element.type === 'text' ? 'T' : element.type === 'choice' ? 'C' : element.type === 'image' ? 'IMG' : 'I'}
                 </span>
                 <span className="flex-1 font-mono text-xs truncate">{element.id}</span>
@@ -272,7 +272,7 @@ export default function EditorSidebar({
                     e.stopPropagation();
                     onDuplicateElement(element.id);
                   }}
-                  className="p-1 text-zinc-500 hover:text-zinc-200 transition cursor-pointer"
+                  className="p-1 text-zinc-400 hover:text-white transition cursor-pointer"
                   title="Дублировать"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -285,7 +285,7 @@ export default function EditorSidebar({
                     e.stopPropagation();
                     onDeleteElement(element.id);
                   }}
-                  className="p-1 text-zinc-500 hover:text-red-400 transition cursor-pointer"
+                  className="p-1 text-zinc-400 hover:text-red-400 transition cursor-pointer"
                   title="Удалить"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -307,10 +307,10 @@ export default function EditorSidebar({
         />
       )}
 
-      <div className="border-t border-zinc-800/80 pt-4 space-y-2.5">
+      <div className="border-t border-white/10 pt-4 space-y-2.5">
         <button
           onClick={onExport}
-          className="w-full px-4 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700/80 rounded-lg font-medium text-xs transition shadow-sm active:scale-[0.98] cursor-pointer"
+          className="w-full px-4 py-2.5 bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 text-zinc-200 hover:text-white border border-white/10 border-t-white/20 hover:border-white/20 rounded-xl font-medium text-xs transition-all duration-200 shadow-lg shadow-black/20 active:scale-[0.98] cursor-pointer"
         >
           Экспорт JSON
         </button>
@@ -319,7 +319,7 @@ export default function EditorSidebar({
           <button
             onClick={onCopyJson}
             disabled={!unit.elements.length}
-            className="w-full px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 rounded-lg text-xs font-medium transition disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 text-zinc-300 hover:text-white border border-white/10 border-t-white/20 hover:border-white/20 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-md shadow-black/20 active:scale-[0.98] cursor-pointer"
           >
             Копировать JSON
           </button>
@@ -335,7 +335,7 @@ export default function EditorSidebar({
             <button
               type="button"
               onClick={() => document.getElementById('import-json').click()}
-              className="w-full px-3 py-2 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 rounded-lg text-xs font-medium transition cursor-pointer"
+              className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 text-zinc-300 hover:text-white border border-white/10 border-t-white/20 hover:border-white/20 rounded-xl text-xs font-medium transition-all duration-200 shadow-md shadow-black/20 active:scale-[0.98] cursor-pointer"
             >
               Импорт JSON
             </button>
@@ -345,7 +345,7 @@ export default function EditorSidebar({
         <button
           onClick={onSave}
           disabled={!unit.title}
-          className="w-full px-4 py-2.5 bg-zinc-100 hover:bg-white text-zinc-900 rounded-lg font-semibold text-sm transition shadow-sm border border-white/20 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full px-4 py-2.5 bg-white/95 hover:bg-white text-zinc-950 rounded-xl font-semibold text-sm transition-all duration-200 shadow-xl shadow-black/30 border border-white/40 border-t-white active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
         >
           Сохранить юнит в базу
         </button>

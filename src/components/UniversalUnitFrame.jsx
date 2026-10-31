@@ -127,7 +127,7 @@ export default function UniversalUnitFrame({
         </div>
 
         {/* ================= ЦЕНТРАЛЬНАЯ ОБЛАСТЬ (ХОЛСТ) ================= */}
-        <div className="relative w-full h-[420px] min-h-[420px] max-h-[420px] bg-white overflow-hidden shrink-0">
+        <div className="relative w-full h-[520px] min-h-[520px] max-h-[520px] bg-white overflow-hidden shrink-0">
           {children}
         </div>
 

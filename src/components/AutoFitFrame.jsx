@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 
 export const BASE_WIDTH = 760;
-export const BASE_HEIGHT = 580;
+export const BASE_HEIGHT = 680;
 
 export default function AutoFitFrame({
   children,
   baseWidth = BASE_WIDTH,
   baseHeight = BASE_HEIGHT,
-  padding = 32,
+  padding = 16,
   className = '',
 }) {
   const containerRef = useRef(null);
@@ -47,7 +47,7 @@ export default function AutoFitFrame({
   return (
     <div
       ref={containerRef}
-      className={`w-full h-full flex-1 flex items-center justify-center overflow-hidden p-4 relative ${className}`}
+      className={`w-full h-full flex-1 flex items-center justify-center overflow-hidden p-2 relative ${className}`}
     >
       <div
         style={{

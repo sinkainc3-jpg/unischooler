@@ -42,7 +42,7 @@ const UnitCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[420px] min-h-[420px] max-h-[420px] bg-white overflow-hidden shrink-0"
+      className="relative w-full h-[520px] min-h-[520px] max-h-[520px] bg-white overflow-hidden shrink-0"
       onClick={handleCanvasClick}
       tabIndex={0}
     >
@@ -79,7 +79,7 @@ const UnitCanvas = forwardRef((props, ref) => {
 
       {isPreviewMode && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20 pointer-events-none">
-          <div className="bg-zinc-900/90 backdrop-blur-md px-3.5 py-1.5 rounded-md border border-zinc-800 text-xs text-zinc-300 shadow-md font-medium">
+          <div className="bg-zinc-900/60 backdrop-blur-xl px-4 py-2 rounded-xl border border-white/10 border-t-white/20 text-xs text-zinc-200 shadow-xl shadow-black/40 font-medium">
             Режим предпросмотра — элементы не редактируются
           </div>
         </div>

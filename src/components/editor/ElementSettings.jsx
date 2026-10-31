@@ -53,7 +53,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml"
           onChange={handleImageFileChange}
           disabled={isUploadingImage}
-          className="w-full px-2.5 py-1.5 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 file:mr-3 file:py-1 file:px-2.5 file:border file:border-zinc-700 file:bg-zinc-800 file:text-zinc-200 file:rounded-md file:cursor-pointer hover:file:bg-zinc-700 text-xs transition"
+          className="w-full px-2.5 py-1.5 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 file:mr-3 file:py-1 file:px-2.5 file:border file:border-white/10 file:bg-zinc-800/80 file:text-zinc-200 file:rounded-lg file:cursor-pointer hover:file:bg-zinc-700 text-xs transition-all duration-200"
         />
         {isUploadingImage && (
           <span className="text-xs text-amber-400 block mt-1">Загрузка в unit-images...</span>
@@ -65,12 +65,12 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           type="text"
           value={element.src || ''}
           onChange={(e) => onUpdate(element.id, { src: e.target.value })}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 font-mono text-xs transition"
+          className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 font-mono text-xs transition-all duration-200"
           placeholder="https://..."
         />
       </label>
       {element.src && (
-        <div className="w-full h-32 bg-zinc-950 border border-zinc-800 rounded-lg p-2 flex items-center justify-center overflow-hidden">
+        <div className="w-full h-32 bg-zinc-950/80 border border-white/10 rounded-xl p-2 flex items-center justify-center overflow-hidden shadow-inner">
           <img src={element.src} alt="Предпросмотр" className="max-w-full max-h-full object-contain" />
         </div>
       )}
@@ -85,7 +85,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           value={element.content}
           onChange={(e) => handleChange('content', e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 resize-none font-mono text-xs transition"
+          className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 resize-none font-mono text-xs transition-all duration-200"
           placeholder="Введите текст..."
         />
       </label>
@@ -100,7 +100,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             step="1"
             value={element.fontSize}
             onChange={(e) => handleChange('fontSize', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           />
         </label>
 
@@ -109,7 +109,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           <select
             value={element.fontWeight}
             onChange={(e) => handleChange('fontWeight', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           >
             <option value="normal">Обычный</option>
             <option value="bold">Жирный</option>
@@ -122,7 +122,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
         <select
           value={element.textAlign}
           onChange={(e) => handleChange('textAlign', e.target.value)}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+          className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
         >
           <option value="left">По левому краю</option>
           <option value="center">По центру</option>
@@ -137,13 +137,13 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             type="color"
             value={element.textColor || '#18181b'}
             onChange={(e) => onUpdate(element.id, { textColor: e.target.value })}
-            className="w-9 h-9 rounded-md border border-zinc-700 bg-transparent cursor-pointer p-0.5"
+            className="w-9 h-9 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0.5"
           />
           <input
             type="text"
             value={element.textColor || '#18181b'}
             onChange={(e) => onUpdate(element.id, { textColor: e.target.value })}
-            className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="flex-1 px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
             placeholder="#18181b"
           />
         </div>
@@ -159,7 +159,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           type="text"
           value={element.correctAnswer}
           onChange={(e) => handleChange('correctAnswer', e.target.value)}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+          className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           placeholder="Правильный ответ"
         />
       </label>
@@ -266,7 +266,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           <select
             value={element.correctOptionId}
             onChange={(e) => handleCorrectOptionChange(e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           >
             {options.map((opt) => (
               <option key={opt.id} value={opt.id}>
@@ -283,24 +283,24 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
               type="color"
               value={element.optionTextColor || '#18181b'}
               onChange={(e) => onUpdate(element.id, { optionTextColor: e.target.value })}
-              className="w-9 h-9 rounded-md border border-zinc-700 bg-transparent cursor-pointer p-0.5"
+              className="w-9 h-9 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0.5"
             />
             <input
               type="text"
               value={element.optionTextColor || '#18181b'}
               onChange={(e) => onUpdate(element.id, { optionTextColor: e.target.value })}
-              className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+              className="flex-1 px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
               placeholder="#18181b"
             />
           </div>
         </label>
 
-        <div className="border-t border-zinc-800/80 pt-3">
+        <div className="border-t border-white/10 pt-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-zinc-400">Варианты ответа</span>
             <button
               onClick={addOption}
-              className="px-2 py-1 text-xs bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded text-zinc-200 transition cursor-pointer"
+              className="px-2.5 py-1 text-xs bg-zinc-900/60 backdrop-blur-xl hover:bg-zinc-800/70 border border-white/10 border-t-white/20 text-zinc-200 rounded-lg shadow-sm active:scale-[0.98] transition-all cursor-pointer"
             >
               + Добавить вариант
             </button>
@@ -322,13 +322,13 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
                   type="text"
                   value={opt.text}
                   onChange={(e) => updateOptionText(opt.id, e.target.value)}
-                  className="flex-1 px-2.5 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-100 text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+                  className="flex-1 px-2.5 py-1.5 bg-zinc-900/60 backdrop-blur-md border border-white/10 rounded-xl text-zinc-100 text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all"
                   placeholder="Вариант ответа"
                 />
                 <button
                   onClick={() => removeOption(opt.id)}
                   disabled={options.length <= 2}
-                  className="p-1 text-zinc-500 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition"
+                  className="p-1 text-zinc-400 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition"
                   title="Удалить"
                 >
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -347,10 +347,10 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
   };
 
   return (
-    <div className="border-t border-zinc-800/80 pt-4 space-y-3">
+    <div className="border-t border-white/10 pt-4 space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-zinc-200">Настройки элемента</h3>
-        <span className="px-2 py-0.5 text-[11px] font-mono font-medium rounded border border-zinc-700 bg-zinc-800 text-zinc-300">
+        <span className="px-2.5 py-0.5 text-[11px] font-mono font-medium rounded-lg border border-white/10 border-t-white/20 bg-zinc-900/60 backdrop-blur-md text-zinc-200 shadow-sm">
           {element.type === 'text' ? 'Текст' : element.type === 'choice' ? 'Выбор' : element.type === 'image' ? 'Картинка' : 'Ввод'}
         </span>
       </div>
@@ -361,7 +361,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
           type="text"
           value={element.id}
           onChange={(e) => handleChange('id', e.target.value)}
-          className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+          className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
         />
       </label>
 
@@ -375,7 +375,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.x ?? 0}
             onChange={(e) => handleChange('x', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           />
         </label>
 
@@ -388,7 +388,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.y ?? 0}
             onChange={(e) => handleChange('y', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           />
         </label>
 
@@ -401,7 +401,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.width ?? 0}
             onChange={(e) => handleChange('width', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           />
         </label>
 
@@ -414,7 +414,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
             max={element.type === 'image' ? undefined : 100}
             value={element.height ?? 0}
             onChange={(e) => handleChange('height', e.target.value)}
-            className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-zinc-100 font-mono text-xs focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500/30 transition"
+            className="w-full px-3 py-2 bg-zinc-900/60 backdrop-blur-md border border-white/10 border-t-white/15 rounded-xl text-zinc-100 font-mono text-xs focus:border-white/30 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all duration-200"
           />
         </label>
       </div>
@@ -426,7 +426,7 @@ export default function ElementSettings({ element, onUpdate, onDelete }) {
 
       <button
         onClick={onDelete}
-        className="w-full px-4 py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-800/60 text-red-300 rounded-lg font-medium text-xs transition active:scale-[0.98] cursor-pointer"
+        className="w-full px-4 py-2 bg-red-950/40 hover:bg-red-900/60 border border-red-500/30 border-t-red-400/40 text-red-200 rounded-xl font-medium text-xs shadow-lg shadow-black/20 transition-all duration-200 active:scale-[0.98] cursor-pointer"
       >
         Удалить элемент
       </button>

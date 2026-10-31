@@ -188,12 +188,12 @@ export default function App() {
   // ЭКРАН КАЛЕНДАРЯ
   if (currentScreen === 'calendar') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white p-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-6">Календарь занятий</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6">
+        <h1 className="text-xl md:text-2xl font-semibold mb-6 text-zinc-100">Календарь занятий</h1>
         <Calendar completedDays={[]} />
         <button
           onClick={() => setCurrentScreen('unit')}
-          className="mt-6 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
+          className="mt-6 px-5 py-2.5 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-200 hover:text-white font-medium text-xs rounded-xl shadow-lg shadow-black/30 transition-all duration-200 cursor-pointer"
         >
           ← Вернуться к уроку
         </button>
@@ -204,11 +204,11 @@ export default function App() {
   // ЭКРАН ROAD MAP
   if (currentScreen === 'roadmap') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white p-6">
-        <p className="text-lg md:text-xl text-slate-300 mb-8">Здесь будет маршрут модулей, i guess</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6">
+        <p className="text-base md:text-lg text-zinc-300 mb-8">Здесь будет маршрут модулей</p>
         <button
           onClick={() => setCurrentScreen('unit')}
-          className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
+          className="px-5 py-2.5 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-200 hover:text-white font-medium text-xs rounded-xl shadow-lg shadow-black/30 transition-all duration-200 cursor-pointer"
         >
           ← Вернуться к уроку
         </button>
@@ -218,10 +218,10 @@ export default function App() {
 
   if (currentScreen === 'unitlist') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white p-6">
-        <h1 className="text-2xl md:text-3xl font-bold mb-6">Список юнит</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6">
+        <h1 className="text-xl md:text-2xl font-semibold mb-6 text-zinc-100">Список юнитов</h1>
 
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl w-full max-w-lg mb-8 shadow-xl">
+        <div className="bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 p-4 rounded-2xl w-full max-w-lg mb-8 shadow-xl shadow-black/40">
           {unitsData?.map((unit, index) => (
             <button
               key={unit.id || index}
@@ -229,29 +229,29 @@ export default function App() {
                 setCurrentUnitIndex(index);
                 setCurrentScreen('unit');
               }}
-              className={`w-full text-left px-4 py-3 mb-2 last:mb-0 rounded-lg border flex items-center gap-3 transition-all duration-150 cursor-pointer ${
+              className={`w-full text-left px-4 py-3 mb-2 last:mb-0 rounded-xl border flex items-center gap-3 transition-all duration-150 cursor-pointer ${
                 index === currentUnitIndex
-                  ? 'border-indigo-500 bg-indigo-500/10 font-bold text-white shadow-[0_0_15px_rgba(79,70,229,0.25)]'
-                  : 'border-slate-800 bg-slate-950/50 hover:bg-slate-800 hover:border-indigo-500/40 text-slate-300'
+                  ? 'border-white/20 border-t-white/30 bg-zinc-800/80 font-semibold text-white shadow-md'
+                  : 'border-white/5 bg-zinc-900/40 hover:bg-zinc-800/50 hover:border-white/10 text-zinc-300'
               }`}
             >
               <span
-                className={`flex items-center justify-center w-7 h-7 shrink-0 rounded-md text-sm font-bold ${
+                className={`flex items-center justify-center w-7 h-7 shrink-0 rounded-lg text-xs font-semibold ${
                   index === currentUnitIndex
-                    ? 'bg-indigo-600 text-white'
-                    : 'bg-slate-800 text-slate-400'
+                    ? 'bg-white text-zinc-950'
+                    : 'bg-zinc-800 border border-white/10 text-zinc-300'
                 }`}
               >
                 {index + 1}
               </span>
-              {unit.title || `Юнита ${index + 1}`}
+              {unit.title || `Юнит ${index + 1}`}
             </button>
           ))}
         </div>
 
         <button
           onClick={() => setCurrentScreen('unit')}
-          className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
+          className="px-5 py-2.5 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-200 hover:text-white font-medium text-xs rounded-xl shadow-lg shadow-black/30 transition-all duration-200 cursor-pointer"
         >
           ← Вернуться к уроку
         </button>
@@ -261,11 +261,11 @@ export default function App() {
 
   if (currentScreen === 'level') {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-950 text-white p-6">
-        <p className="text-lg md:text-xl text-slate-300 mb-8">Здесь будут все модули Nго уровня</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6">
+        <p className="text-base md:text-lg text-zinc-300 mb-8">Здесь будут все модули уровня</p>
         <button
           onClick={() => setCurrentScreen('unit')}
-          className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded-lg transition"
+          className="px-5 py-2.5 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-200 hover:text-white font-medium text-xs rounded-xl shadow-lg shadow-black/30 transition-all duration-200 cursor-pointer"
         >
           ← Вернуться к уроку
         </button>
@@ -332,13 +332,13 @@ export default function App() {
         </div>
       )}
 
-      {/* Верхняя навигационная панель с кнопками */}
+      {/* Верхняя навигационная панель с кнопками в стиле macOS Liquid Glass */}
       <header className="h-14 w-full shrink-0 flex items-center justify-between px-6 z-30">
         <div />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentScreen('unitbank')}
-            className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 text-zinc-200 text-xs font-medium rounded-lg transition shadow-sm flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-zinc-900/60 backdrop-blur-xl border border-white/10 border-t-white/20 hover:bg-zinc-800/70 hover:border-white/20 active:scale-[0.98] text-zinc-100 hover:text-white text-xs font-medium rounded-xl shadow-lg shadow-black/30 transition-all duration-200 flex items-center gap-2 cursor-pointer"
           >
             <span>📚</span> Банк юнитов
           </button>
@@ -347,7 +347,7 @@ export default function App() {
               setEditingUnit(null);
               setCurrentScreen('adminEditor');
             }}
-            className="px-3.5 py-1.5 bg-zinc-100 hover:bg-white text-zinc-900 border border-white/20 text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 bg-zinc-800/80 backdrop-blur-xl border border-white/15 border-t-white/30 hover:bg-zinc-700/80 hover:border-white/30 active:scale-[0.98] text-white text-xs font-semibold rounded-xl shadow-lg shadow-black/40 transition-all duration-200 flex items-center gap-2 cursor-pointer"
           >
             <span>✏️</span> Конструктор
           </button>
@@ -381,7 +381,7 @@ export default function App() {
         >
           <div
             ref={containerRef}
-            className="relative w-full h-[420px] min-h-[420px] max-h-[420px] bg-white overflow-hidden shrink-0"
+            className="relative w-full h-[520px] min-h-[520px] max-h-[520px] bg-white overflow-hidden shrink-0"
           >
             <div
               className="absolute inset-0 w-full h-full overflow-hidden"

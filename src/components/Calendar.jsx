@@ -38,11 +38,11 @@ export default function Calendar({ completedDays = [] }) {
     a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
   return (
-    <div className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-2xl select-none">
+    <div className="w-full max-w-md bg-zinc-900/70 backdrop-blur-2xl border border-white/10 border-t-white/20 rounded-3xl p-6 shadow-2xl shadow-black/50 select-none">
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => shiftMonth(-1)}
-          className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer flex items-center justify-center font-medium"
+          className="w-8 h-8 rounded-xl bg-zinc-800/60 backdrop-blur-xl hover:bg-zinc-700/70 border border-white/10 border-t-white/20 text-zinc-200 hover:text-white transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center font-medium shadow-md shadow-black/20"
           title="Предыдущий месяц"
         >
           ←
@@ -62,7 +62,7 @@ export default function Calendar({ completedDays = [] }) {
 
         <button
           onClick={() => shiftMonth(1)}
-          className="w-8 h-8 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white transition active:scale-95 cursor-pointer flex items-center justify-center font-medium"
+          className="w-8 h-8 rounded-xl bg-zinc-800/60 backdrop-blur-xl hover:bg-zinc-700/70 border border-white/10 border-t-white/20 text-zinc-200 hover:text-white transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center font-medium shadow-md shadow-black/20"
           title="Следующий месяц"
         >
           →
