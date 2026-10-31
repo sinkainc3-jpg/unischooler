@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export const BASE_WIDTH = 700;
-export const BASE_HEIGHT = 900;
+export const BASE_WIDTH = 760;
+export const BASE_HEIGHT = 580;
 
 export default function AutoFitFrame({
   children,

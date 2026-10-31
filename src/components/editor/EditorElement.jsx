@@ -114,16 +114,24 @@ export default function EditorElement({
     }
   }, [element.id, localPosition, onSelect, isPreviewMode, overlayRect, isEditingText]);
 
+  const getCurrentScale = () => {
+    const el = elementRef.current;
+    if (el && el.offsetWidth > 0) {
+      return el.getBoundingClientRect().width / el.offsetWidth || 1;
+    }
+    const parent = el?.parentElement;
+    if (parent && parent.offsetWidth > 0) {
+      return parent.getBoundingClientRect().width / parent.offsetWidth || 1;
+    }
+    return 1;
+  };
+
   const handlePointerMove = useCallback((e) => {
     if (!isDragging && !isResizing) return;
     if (!overlayRect) return;
 
     if (isImage) {
-      const domEl = elementRef.current;
-      const currentScale = domEl && domEl.offsetWidth > 0
-        ? (domEl.getBoundingClientRect().width / domEl.offsetWidth)
-        : 1;
-
+      const currentScale = getCurrentScale();
       const dx = (e.clientX - dragStart.x) / currentScale;
       const dy = (e.clientY - dragStart.y) / currentScale;
 
@@ -240,10 +248,7 @@ export default function EditorElement({
     e.stopPropagation();
     e.preventDefault();
 
-    const domEl = elementRef.current;
-    const currentScale = domEl && domEl.offsetWidth > 0
-      ? (domEl.getBoundingClientRect().width / domEl.offsetWidth)
-      : 1;
+    const currentScale = getCurrentScale();
 
     const startX = e.clientX;
     const startY = e.clientY;
