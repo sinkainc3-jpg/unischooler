@@ -21,20 +21,13 @@ export default function EditorSidebar({
   generateId,
 }) {
   const subject = unit.subject || 'math';
-  const isMath = subject === 'math';
 
   const handleSubjectChange = (e) => {
     const newSubject = e.target.value;
-    onUnitChange((prev) => {
-      const next = { ...prev, subject: newSubject };
-      if (newSubject === 'math' && !prev.type) {
-        next.type = 'learn';
-      }
-      if (newSubject === 'russian') {
-        delete next.type;
-      }
-      return next;
-    });
+    onUnitChange((prev) => ({
+      ...prev,
+      subject: newSubject,
+    }));
   };
 
   return (
@@ -69,20 +62,6 @@ export default function EditorSidebar({
             <option value="history">История</option>
           </select>
         </label>
-
-        {isMath && (
-          <label className="block">
-            <span className="text-xs text-slate-400 block mb-1">Тип юнита</span>
-            <select
-              value={unit.type || 'learn'}
-              onChange={(e) => onUnitChange({ ...unit, type: e.target.value })}
-              className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            >
-              <option value="learn">Учебный</option>
-              <option value="train">Тренировочный</option>
-            </select>
-          </label>
-        )}
 
         <label className="block">
           <span className="text-xs text-slate-400 block mb-1">Сложность (Количество звезд)</span>

@@ -277,10 +277,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
       }),
     };
     
-    // Добавляем type только для математики
-    if (unit.subject === 'math') {
-      exportUnit.type = unit.type || 'learn';
-    }
+    exportUnit.type = unit.type || 'learn';
     
     const json = JSON.stringify(exportUnit, null, 2);
     setExportJson(json);
@@ -323,8 +320,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
         }
         
         const subject = imported.subject || 'math';
-        const isRussian = subject === 'russian';
-        
+
         setUnit({
           id: imported.id || '',
           subject: subject,
@@ -332,7 +328,7 @@ export default function UnitEditor({ onBack, initialUnit }) {
           starsCount: imported.starsCount || imported.difficulty || 3,
           moduleName: imported.moduleName || imported.module_name || 'Модуль',
           unitCode: imported.unitCode || imported.unit_code || '',
-          type: isRussian ? undefined : (imported.type || 'learn'),
+          type: imported.type || 'learn',
           title: imported.title || '',
           image: imported.image || '',
           imagePath: imported.image || '',
