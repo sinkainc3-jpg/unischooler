@@ -48,7 +48,7 @@ export default function UniversalUnitFrame({
       <div className="relative flex w-full h-full shrink-0 flex-col overflow-hidden rounded-2xl border border-zinc-900/90 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.35),0_1px_3px_rgba(0,0,0,0.1)]">
 
         {/* ================= ШАПКА ================= */}
-        <div className="shrink-0 bg-white border-b border-dashed border-zinc-400 h-[100px] px-6 flex items-center justify-between gap-3">
+        <div className="shrink-0 bg-white border-b border-dashed border-zinc-400 h-[100px] px-5 flex items-center justify-between gap-3">
 
           {/* Левый блок: название предмета и модуль / робот */}
           <div className="flex items-center gap-2.5 min-w-0">
@@ -61,7 +61,7 @@ export default function UniversalUnitFrame({
                 <img
                   src="/sprites/robot.png"
                   alt="Выбор уровня"
-                  className="w-16 h-16 object-contain transition-transform group-hover:scale-105"
+                  className="w-20 h-20 object-contain transition-transform group-hover:scale-105"
                 />
                 <span className="pointer-events-none absolute left-0 translate-x-0 top-full mt-2 z-50 w-max max-w-[170px] rounded-md bg-zinc-900 border border-zinc-800 px-2.5 py-1 text-xs font-medium text-zinc-200 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                   Выбрать уровень
@@ -69,18 +69,18 @@ export default function UniversalUnitFrame({
               </button>
             )}
 
-            <span className="shrink-0 truncate rounded-2xl border border-zinc-200 bg-zinc-100 px-4 py-2 text-xs font-bold uppercase tracking-wider text-zinc-800">
+            <span className="shrink-0 truncate rounded-2xl border-2 border-zinc-200 bg-zinc-100 px-4.5 py-2.5 text-sm font-extrabold uppercase tracking-wider text-zinc-800 shadow-xs">
               {subjectLabel.toUpperCase()}
             </span>
 
             {!isTrain && (
               <button
                 onClick={onRoadmapClick}
-                className="flex shrink-0 flex-col items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3.5 py-2 leading-tight text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
+                className="flex shrink-0 flex-col items-center justify-center rounded-2xl border-2 border-zinc-300 bg-white px-4 py-2 leading-tight text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
                 title="Открыть маршрут модулей"
               >
-                <span className="text-xs font-bold">{moduleName || 'Модуль'}</span>
-                <span className="text-[10px] font-mono font-semibold tracking-wide text-zinc-500 whitespace-nowrap">
+                <span className="text-sm font-bold">{moduleName || 'Модуль'}</span>
+                <span className="text-xs font-mono font-bold tracking-wide text-zinc-500 whitespace-nowrap">
                   {displayedUnitCode}
                 </span>
               </button>
@@ -90,20 +90,20 @@ export default function UniversalUnitFrame({
           {/* Центр: Юнит + дата */}
           <div className="flex shrink-0 items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-zinc-500">Юнит</span>
+              <span className="text-sm font-bold text-zinc-500">Юнит</span>
               <button
                 onClick={onNumberClick}
-                className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-xs font-bold text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
+                className="rounded-2xl border-2 border-zinc-300 bg-white px-4.5 py-2 text-sm font-extrabold text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
                 title="Список юнитов"
               >
                 {unitNumber}
               </button>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-bold text-zinc-500">дата</span>
+              <span className="text-sm font-bold text-zinc-500">дата</span>
               <button
                 onClick={onDateClick}
-                className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-xs font-bold text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
+                className="rounded-2xl border-2 border-zinc-300 bg-white px-4.5 py-2 text-sm font-extrabold text-zinc-800 hover:bg-zinc-50 hover:border-zinc-400 transition cursor-pointer shadow-sm"
                 title="Открыть календарь занятий"
               >
                 {new Date().toLocaleDateString('ru-RU')}
@@ -116,7 +116,7 @@ export default function UniversalUnitFrame({
             <img
               src="/sprites/logo.png"
               alt="Unischooler"
-              className="w-16 h-16 object-contain"
+              className="w-20 h-20 object-contain"
             />
             {isTrain && (
               <div className="whitespace-nowrap rounded-xl border border-zinc-300 bg-zinc-50 px-3 py-1 text-xs font-bold text-zinc-800 shadow-sm">
