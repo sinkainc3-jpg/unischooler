@@ -36,7 +36,7 @@ const DEFAULT_UNIT = {
 // создаётся новый тип компонента и React перемонтирует всё поддерево —
 // тогда сбрасываются значения и фокус полей ввода в предпросмотре.
 const ScaledFrame = ({ unitType, children }) => (
-  <div className="w-[660px] shrink-0 flex flex-col items-center justify-center">
+  <div className="w-[730px] shrink-0 flex flex-col items-center justify-center">
     {children}
   </div>
 );
