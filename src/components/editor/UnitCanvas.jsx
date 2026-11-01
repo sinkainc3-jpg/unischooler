@@ -42,7 +42,7 @@ const UnitCanvas = forwardRef((props, ref) => {
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[524px] min-h-[524px] max-h-[524px] bg-white overflow-hidden shrink-0"
+      className="relative w-full h-[492px] min-h-[492px] max-h-[492px] bg-white overflow-hidden shrink-0"
       onClick={handleCanvasClick}
       tabIndex={0}
     >
